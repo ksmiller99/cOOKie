@@ -112,10 +112,14 @@ namespace cOOKie
 
     public enum bladerf_lna_gain
     {
-        BLADERF_LNA_GAIN_UNKNOWN = 0,    /**< Invalid LNA gain */
-        BLADERF_LNA_GAIN_BYPASS = 1,     /**< LNA bypassed - 0dB gain */
-        BLADERF_LNA_GAIN_MID = 2,        /**< LNA Mid Gain (MAX-6dB) */
-        BLADERF_LNA_GAIN_MAX = 3         /**< LNA Max Gain */
+        ///<summary>Invalid LNA gain</summary>
+        BLADERF_LNA_GAIN_UNKNOWN = 0,
+        ///<summary>LNA bypassed - 0dB gain</summary>
+        BLADERF_LNA_GAIN_BYPASS = 1,
+        ///<summary>LNA Mid Gain (MAX-6dB)</summary>
+        BLADERF_LNA_GAIN_MID = 2,
+        ///<summary>LNA Max Gain</summary>
+        BLADERF_LNA_GAIN_MAX = 3         
     }
 
     public enum bladerf_lpf_mode

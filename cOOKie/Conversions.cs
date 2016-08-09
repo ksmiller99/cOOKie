@@ -283,7 +283,8 @@ namespace cOOKie
              /* Check that the resulting value is in bounds */
              if (value > max || value < min) {
                 ok = false;
-                return 0;
+                
+                 return 0;
              }
 
              ok = true;

@@ -62,10 +62,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="BrfNativeMethods.cs" />
+    <Compile Include="OokDevice.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BladeRF.cs" />
     <Compile Include="PwmWord.cs" />
+    <Compile Include="stackOverflow.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
