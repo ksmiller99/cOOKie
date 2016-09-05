@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="cOOKie.BrfNativeMethods">
+    <Position X="0.5" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>KAAmGAQgBQJAAoBAAFeBAMQRACUQAgUAIAIEiEAhEAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="cOOKie.bladerf_version" Collapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAACAAAAAAAAAAAAABAAAAAAAAAACAAAAAAIAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="cOOKie.bladerf_metadata" Collapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="cOOKie.bladerf_devinfo" Collapsed="true">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAEAAAAABAAAAAAAAIEAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="cOOKie.bladerf_rational_rate" Collapsed="true">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAIIAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="cOOKie.bladerf_fpga_size" Collapsed="true">
+    <Position X="9.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAJAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_const" Collapsed="true">
+    <Position X="9.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQACAAAAgAAAAAAAAAICAAAABAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_backend" Collapsed="true">
+    <Position X="6" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAACAAAAAAAAAAAAAAAAABAAIBAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_dev_speed" Collapsed="true">
+    <Position X="13" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_error_codes" Collapsed="true">
+    <Position X="6" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAIFBgACAAAACAAAAAEAABAAEAIACAAAAAQBCA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_module" Collapsed="true">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_loopback" Collapsed="true">
+    <Position X="6" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAQAAAAAAAAAAAAAAAEAAgaAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_sampling" Collapsed="true">
+    <Position X="11.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAgABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_lna_gain" Collapsed="true">
+    <Position X="11.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAIAIAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_lpf_mode" Collapsed="true">
+    <Position X="7.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_cal_module" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgABAAAAAAAAAAAACAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_correction" Collapsed="true">
+    <Position X="11.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAEAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_format" Collapsed="true">
+    <Position X="7.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_xb" Collapsed="true">
+    <Position X="13" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_xb200_filter" Collapsed="true">
+    <Position X="6" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAABACAAAAAAAEAIQAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_log_level" Collapsed="true">
+    <Position X="13" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAEAAABAAAAAAgAAAAAAAgABgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="cOOKie.bladerf_xb200_path" Collapsed="true">
+    <Position X="7.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="cOOKie.bladerf_stream_cb" Collapsed="true">
+    <Position X="6" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAEAAAgAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>BrfNativeMethods.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

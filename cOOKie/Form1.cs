@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Numerics;
-
+using System.Reflection;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -20,18 +20,20 @@ namespace cOOKie
 {
     public partial class Form1 : Form
     {
-        Int32 sdr_status;
-        IntPtr _sdr;
-        string sdrspec = "";
+        //Int32 sdr_status;
+        //IntPtr _sdr;
         BladeRF brf;
         FirFilter ff;
         Double[,] signal;
         PwmWord pwmWord;
         OokDevice currentDevice;
 
+        StringWriter sdrLog;
+
         //BladeRF SC16Q11 IQ samples
-        UInt16[] recordedSignal;
-        UInt16[] generatedSignal;
+        Int16[] recordedSignal;
+        Int16[] generatedSignal;
+        Int16[] transmittedSignal;
 
         // Create the MATLAB instance 
         MLApp.MLApp matlab;
@@ -39,67 +41,195 @@ namespace cOOKie
         //flags to allow parsing scientific notation
         NumberStyles nStyles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint | NumberStyles.AllowThousands;
         CultureInfo cInfo = CultureInfo.InvariantCulture;
-        
+
         public Form1()
         {
             InitializeComponent();
-            btnRxReceive.Enabled = false;  //disable Rx button until SDR is selected and file selected
-            btnTransmit.Enabled = false; //disable Tx button until tx-capable SDR is selected
-            cbSdrRxLnaGain.SelectedIndex = 0;
-
+            
             // Create the MATLAB instance 
             matlab = new MLApp.MLApp();
-            matlab.Execute(@"cd '" + Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)+"'");
+            matlab.Execute(@"cd '" + Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "'");
 
-            cbDvSyncEdge.Items.AddRange(Enum.GetNames(typeof( OokDevice.SyncEdges)));
-         }
+            rxSaveFileDialog.InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\signals\";
+            txOpenFileDialog.InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\signals\";
+            anOpenFileDialog.InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\signals\";
+            dvOpenFileDialog.InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\devices\";
+            dvSaveFileDialog.InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\devices\";
+
+            cbDvSyncEdge.Items.AddRange(Enum.GetNames(typeof(OokDevice.SyncEdges)));
+        }
 
         [HandleProcessCorruptedStateExceptions]
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbSdr_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
             string sdr = cb.GetItemText(cb.SelectedItem);
-            switch (sdr){
+            switch (sdr)
+            {
                 case "BladeRF":
+
+                    // already connected to bladeRF
+                    if (brf != null)
+                        return;
+
                     try
                     {
-                        
-                        sdr_status = BrfNativeMethods.bladerf_open(out _sdr, sdrspec);
-                        //bladerf_version fpga_version = BrfNativeMethods.bladerf_fpga_version(_sdr);
-                        //MessageBox.Show(String.Format("FPGA version: {0}.{1}.{2}", fpga_version.major, fpga_version.minor, fpga_version.patch),"BladeRF Versions");
-                        brf = new BladeRF(_sdr,         //handle to SDR
-                                      true,         //can transmit
-                                      0,            //min freq
-                                      4000000000    //max freq
-                                      );
-
-                        
-                        MessageBox.Show(brf.getHwVersion()+"\nSerial Number: "+brf.getSerialNumber(), "Blade RF Versions");
-                        getBrfRxConfig();
-                        tbSdrRxBandwidth.Enabled = true;
-                        tbSdrRxFrequency.Enabled = true;
-                        tbSdrRxBandwidth.Enabled = true;
-                        tbSdrRxSampleRate.Enabled = true;
-                        cbSdrRxLnaGain.Enabled = true;
-                        tbSdrRxVGain1.Enabled = true;
-                        tbSdrRxVGain2.Enabled = true;
-                        tbSdrRxNumBuffers.Enabled = true;
-                        tbSdrRxNumUsbChannels.Enabled = true;
-                        tbSdrRxSamPerBuffer.Enabled = true;
-                        tbSdrRxSyncTimeout.Enabled = true;
-                        
-                        
-
+                        brf = new BladeRF("");
                     }
-                    catch (Exception ee) {
-                        MessageBox.Show("BladeRF not found. Exception Details:\n"+ee.Message, "Error");
+                    catch (Exception ee)
+                    {
+                        MessageBox.Show("BladeRF not found. Exception Details:\n" + ee.Message, "Error");
                         cb.SelectedIndex = -1;
-                    
+                        return;
                     }
+
+                    //MessageBox.Show("Hardware Version: " + brf.fpgaVersionStr + "\nSerial Number: " + brf.serialNumber, "Blade RF Versions");
+                    tbRxSdrStatus.AppendText("Hardware Version: " + brf.fpgaVersionStr);
+                    tbRxSdrStatus.AppendText("\r\nSerial Number: " + brf.serialNumber);
+                    tbRxSdrStatus.AppendText("\r\nFPGA size: " + brf.fpgaSize);
+                    tbRxSdrStatus.AppendText("\r\nFPGA version: " + brf.fpgaVersionStr);
+
+                    tbTxSdrStatus.Text = tbRxSdrStatus.Text;
+
+                    //capture log output from stdout
+                    sdrLog = new StringWriter();
+                    Console.SetOut(sdrLog);
+
+                    try
+                    {
+                        getBrfRxConfig();
+                    }
+                    catch (Exception ee)
+                    {
+                        MessageBox.Show("BladeRF configuration error. Exception Details:\n" + ee.Message, "Error");
+                        brf.close();
+                        brf = null;
+
+                        tbRxBandwidth.Text = "";
+                        tbRxFrequency.Text = "";
+                        tbRxBandwidth.Text = "";
+                        tbRxSampleRate.Text = "";
+                        cbRxLnaGain.SelectedIndex = -1;
+                        tbRxVGain1.Text = "";
+                        tbRxVGain2.Text = "";
+                        tbRxNumBuffers.Text = "";
+                        tbRxNumXfers.Text = "";
+                        tbRxBufferSize.Text = "";
+                        tbRxSyncTimeout.Text = "";
+                        cb.SelectedIndex = -1;
+
+                        tbTxBandwidth.Text = "";
+                        tbTxFrequency.Text = "";
+                        tbTxBandwidth.Text = "";
+                        tbTxSampleRate.Text = "";
+                        tbTxVGain1.Text = "";
+                        tbTxVGain2.Text = "";
+                        tbTxNumBuffers.Text = "";
+                        tbTxNumXfers.Text = "";
+                        tbTxBufferSize.Text = "";
+                        tbTxSyncTimeout.Text = "";
+                        cb.SelectedIndex = -1;
+
+                        return;
+                    }
+
+                    tbRxBandwidth.Enabled = true;
+                    tbRxFrequency.Enabled = true;
+                    tbRxBandwidth.Enabled = true;
+                    tbRxSampleRate.Enabled = true;
+                    cbRxLnaGain.Enabled = true;
+                    tbRxVGain1.Enabled = true;
+                    tbRxVGain2.Enabled = true;
+                    tbRxNumBuffers.Enabled = true;
+                    tbRxNumXfers.Enabled = true;
+                    tbRxBufferSize.Enabled = true;
+                    tbRxSyncTimeout.Enabled = true;
+
+                    tbTxBandwidth.Enabled = true;
+                    tbTxFrequency.Enabled = true;
+                    tbTxBandwidth.Enabled = true;
+                    tbTxSampleRate.Enabled = true;
+                    tbTxVGain1.Enabled = true;
+                    tbTxVGain2.Enabled = true;
+                    tbTxNumBuffers.Enabled = true;
+                    tbTxNumXfers.Enabled = true;
+                    tbTxBufferSize.Enabled = true;
+                    tbTxSyncTimeout.Enabled = true;
 
                     if (tbRxFileName.Text != "")
                         btnRxReceive.Enabled = true;
+
+                    if (tbTxFileName.Text != "")
+                        btnTxTransmit.Enabled = true;
+
+                    if (tbTxFileName.Text != "")
+                        btnTxTransmit.Enabled = true;
+
+                    if (brf.statusMsg != "")
+                        MessageBox.Show(brf.statusMsg);
+
+                    break;
+
+                case "None":
+                    if (brf == null)
+                        return;
+
+                    brf.close();
+                    sdrLog = null;
+                    brf = null;
+
+                    tbRxBandwidth.Text = "";
+                    tbRxFrequency.Text = "";
+                    tbRxBandwidth.Text = "";
+                    tbRxSampleRate.Text = "";
+                    cbRxLnaGain.Text = "";
+                    cbRxLnaGain.SelectedIndex = -1;
+                    tbRxVGain2.Text = "";
+                    tbRxNumBuffers.Text = "";
+                    tbRxNumXfers.Text = "";
+                    tbRxBufferSize.Text = "";
+                    tbRxSyncTimeout.Text = "";
+                    cb.SelectedIndex = -1;
+
+                    tbTxBandwidth.Text = "";
+                    tbTxFrequency.Text = "";
+                    tbTxBandwidth.Text = "";
+                    tbTxSampleRate.Text = "";
+                    tbTxVGain1.Text = "";
+                    tbTxVGain2.Text = "";
+                    tbTxNumBuffers.Text = "";
+                    tbTxNumXfers.Text = "";
+                    tbTxBufferSize.Text = "";
+                    tbTxSyncTimeout.Text = "";
+                    cb.SelectedIndex = -1;
+
+                    tbRxBandwidth.Enabled = false;
+                    tbRxFrequency.Enabled = false;
+                    tbRxBandwidth.Enabled = false;
+                    tbRxSampleRate.Enabled = false;
+                    cbRxLnaGain.Enabled = false;
+                    tbRxVGain1.Enabled = false;
+                    tbRxVGain2.Enabled = false;
+                    tbRxNumBuffers.Enabled = false;
+                    tbRxNumXfers.Enabled = false;
+                    tbRxBufferSize.Enabled = false;
+                    tbRxSyncTimeout.Enabled = false;
+                    btnRxReceive.Enabled = false;
                     
+                    tbTxBandwidth.Enabled = false;
+                    tbTxFrequency.Enabled = false;
+                    tbTxBandwidth.Enabled = false;
+                    tbTxSampleRate.Enabled = false;
+                    tbTxVGain1.Enabled = false;
+                    tbTxVGain2.Enabled = false;
+                    tbTxNumBuffers.Enabled = false;
+                    tbTxNumXfers.Enabled = false;
+                    tbTxBufferSize.Enabled = false;
+                    tbTxSyncTimeout.Enabled = false;
+                    btnTxTransmit.Enabled = true;
+
+                    tbTxSdrStatus.Text = tbRxSdrStatus.Text = "";
+
                     break;
 
                 default:
@@ -107,22 +237,10 @@ namespace cOOKie
                     break;
             }
 
-        }
+            //synchronize both combo boxes
+            cbRxSDR.SelectedIndex = cbTxSDR.SelectedIndex = cb.SelectedIndex;
 
-        
-        private void tbSdrFrequency_Leave(object sender, EventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-            string msg;
-            if ((!String.IsNullOrEmpty(tb.Text))&&(!brf.setFrequency(tb.Text, out msg)))
-            {
-                MessageBox.Show("Invald frequency: " + tb.Text+"\n"+msg, "Error");
-                tb.Select();
-            }
 
-            msg = "";
-            tb.Text = brf.getFrequency(out msg).ToString("N0");
-            tb.Text = (msg == "") ? tb.Text : msg;
         }
 
         private void btnFilterSelect_Click(object sender, EventArgs e)
@@ -138,9 +256,9 @@ namespace cOOKie
                 {
                     tbRxFilter.Text = "";
                 }
-            
+
             }
-            
+
         }
 
         private void rbRxInputRaw_CheckedChanged(object sender, EventArgs e)
@@ -153,73 +271,88 @@ namespace cOOKie
             btnFilterSelect.Enabled = true;
         }
 
-        private void btnRxSelectFolder_Click(object sender, EventArgs e)
-        {
-            DialogResult result = folderBrowserDialog1.ShowDialog();
-
-            if (!string.IsNullOrWhiteSpace(folderBrowserDialog1.SelectedPath))
-            {
-                tbRxFolder.Text = folderBrowserDialog1.SelectedPath;
-                tbAnFolder.Text = folderBrowserDialog1.SelectedPath;
-            }
-        }
-
-        private void tbRxFolder_Leave(object sender, EventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-            if (!Directory.Exists(tb.Text))
-            {
-                MessageBox.Show("Folder does not exist: " + tb.Text, "Error");
-                tb.Text = "";
-            }
-            else
-            {
-                tbAnFolder.Text = tbRxFolder.Text;
-            }
-        }
-
-        private void tbRxRecord_Leave(object sender, EventArgs e)
-        {
-            string path = tbRxFolder.Text;
-            path+=path.EndsWith(@"\")?"":@"\";
-            path+=tbRxFileName.Text;
-            if (File.Exists(path))
-            {
-                MessageBox.Show("FileExists", "Warning");
-            }
-        }
-
-
         private void btnRxSelectFile_Click(object sender, EventArgs e)
         {
             // Show the dialog and get result.
-            saveFileDialog1.OverwritePrompt = true;
-            saveFileDialog1.Filter = "BladeRF files (*.SC16Q11)|*.SC16Q11|All files (*.*)|*.*";
-            saveFileDialog1.InitialDirectory = tbRxFolder.Text;
-            DialogResult result = saveFileDialog1.ShowDialog();
+            rxSaveFileDialog.OverwritePrompt = true;
+            rxSaveFileDialog.Filter = "BladeRF files (*.SC16Q11)|*.SC16Q11|All files (*.*)|*.*";
+            DialogResult result = rxSaveFileDialog.ShowDialog();
             if (result == DialogResult.OK) // Test result.
             {
-                tbRxFileName.Text = Path.GetFileName(saveFileDialog1.FileName);
-                tbRxFolder.Text = Path.GetDirectoryName(saveFileDialog1.FileName);
-                if (cbSdrSDR.Text != "")
+                tbRxFileName.Text = Path.GetFileName(rxSaveFileDialog.FileName);
+                if (cbRxSDR.Text != "")
                     btnRxReceive.Enabled = true;
             }
         }
- 
-/*************************************************************************************************************************/
+
+        /*************************************************************************************************************************/
 
         private void btnAnSelectFile_Click(object sender, EventArgs e)
         {
+            string previousFileName = anOpenFileDialog.FileName;
             // Show the dialog and get result.
-            openRecordFileDialog.Filter = "BladeRF files (*.SC16Q11)|*.SC16Q11|All files (*.*)|*.*";
-            openRecordFileDialog.InitialDirectory = tbRxFolder.Text;
-            DialogResult result = openRecordFileDialog.ShowDialog();
+            anOpenFileDialog.Filter = "BladeRF files (*.SC16Q11)|*.SC16Q11|All files (*.*)|*.*";
+            DialogResult result = anOpenFileDialog.ShowDialog();
             if (result == DialogResult.OK) // Test result.
             {
-                tbRxFolder.Text = Path.GetDirectoryName(openRecordFileDialog.FileName);
-                tbAnFolder.Text = Path.GetDirectoryName(openRecordFileDialog.FileName);
-                tbAnSignalFile.Text = Path.GetFileName(openRecordFileDialog.FileName);
+                if (previousFileName != anOpenFileDialog.FileName)
+                    clearAnalysis();
+                tbAnSignalFile.Text = Path.GetFileName(anOpenFileDialog.FileName);
             }
+        }
+
+        private void clearAnalysis()
+        {
+            pwmWord = null;
+
+            tbAnClip.Text = "";
+            tbAnFloor.Text = "";
+            tbAnFirstSample.Text = "";
+            tbAnLastSample.Text = "";
+
+            tbAnSBDelay.Text = "";
+            tbAnNumBits.Text = "";
+            tbAnAvgNarrowWidth.Text = "";
+            tbAnAvgWideWidth.Text = "";
+            tbAnIWDelay.Text = "";
+
+            //set pwmWord and start bit dataContents
+            tbAnWordContents.Text = "";
+            tbAnStartBitContents.Text = "";
+
+            //rise/fall stats
+            tbAnAvgRisePeriod.Text = "";
+            tbAnRiseStDev.Text = "";
+            tbAnAvgFallPeriod.Text = "";
+            tbAnFallStDev.Text = "";
+
+            //clear Bins label and drop-down list
+            lblAnBins.Text = "Bins(0)";
+            cbAnBins.Items.Clear();
+            cbAnBins.Enabled = false;
+            tbAnCurBinWidth.Text = "";
+            tbAnCurBinStDev.Text = "";
+            tbAnCurBinCount.Text = "";
+            tbAnCurBinBits.Text = "";
+
+            //clear Bits label and drop-down list
+            lblAnBits.Text = "Data Bits (0)";
+            cbAnBits.Items.Clear();
+            cbAnBits.Enabled = false;
+            tbAnCurBitPos.Text = "";
+            tbAnCurBitWidth.Text = "";
+            tbAnCurBitPWDev.Text = "";
+            tbAnCurBitRTime.Text = "";
+            tbAnCurBitFPeriod.Text = "";
+            tbAnCurBitFDev.Text = "";
+            tbAnCurBitFTime.Text = "";
+            tbAnCurBitRPeriod.Text = "";
+            tbAnCurBitRDev.Text = "";
+            btnAnCurBitMinus.Enabled = false;
+            btnAnCurBitPlus.Enabled = false;
+
+            btnAnCurBitPlus.Enabled = false;
+            btnAnMakeDevice.Enabled = false;
         }
 
         private void btnAnFilter_Click(object sender, EventArgs e)
@@ -228,11 +361,9 @@ namespace cOOKie
             NumberStyles nStyles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint;
             CultureInfo cInfo = CultureInfo.InvariantCulture;
 
-            string signalFileName = tbAnFolder.Text + (tbAnFolder.Text.EndsWith(@"\")?"":@"\") + tbAnSignalFile.Text;
-
-            if (!File.Exists(signalFileName))
-            { 
-                MessageBox.Show("Signal File does not exist","Error");
+            if (!File.Exists(anOpenFileDialog.FileName))
+            {
+                MessageBox.Show("Signal File does not exist", "Error");
                 return;
             }
 
@@ -259,10 +390,10 @@ namespace cOOKie
             }
 
             //low pass can be blank if all filter fields are blank
-            Double lp=0;
+            Double lp = 0;
             if (!tbAnLowPass.Text.Equals(""))
             {
-                if (!Double.TryParse(tbAnLowPass.Text, nStyles, cInfo, out lp) || lp < 2 || lp > sr/2)
+                if (!Double.TryParse(tbAnLowPass.Text, nStyles, cInfo, out lp) || lp < 2 || lp > sr / 2)
                 {
                     MessageBox.Show("Low Pass (Hz) has an incorrect value.", "Error");
                     return;
@@ -275,11 +406,11 @@ namespace cOOKie
             {
                 if (!Double.TryParse(tbAnStop.Text, nStyles, cInfo, out st) || st <= lp || st > sr / 2)
                 {
-                    errorProviderAn.SetError(tbAnStop, "Stop (Hz) has an incorrect value.");
+                    errorProvider1.SetError(tbAnStop, "Stop (Hz) has an incorrect value.");
                     return;
                 }
                 else
-                    errorProviderAn.SetError(tbAnStop, "");
+                    errorProvider1.SetError(tbAnStop, "");
             }
 
             //amplitude clip can be blank for no clipping
@@ -288,11 +419,11 @@ namespace cOOKie
             {
                 if (!Double.TryParse(tbAnClip.Text, nStyles, cInfo, out ac) || ac < 0.0 || ac > 1.0)
                 {
-                    errorProviderAn.SetError(tbAnClip, "Amplitude Clip has an incorrect value.");
+                    errorProvider1.SetError(tbAnClip, "Amplitude Clip has an incorrect value.");
                     return;
                 }
                 else
-                    errorProviderAn.SetError(tbAnClip, "");
+                    errorProvider1.SetError(tbAnClip, "");
             }
 
             //amplitude floor can be blank for no flooring
@@ -332,12 +463,12 @@ namespace cOOKie
             object result = null;
             try
             {
-                matlab.Feval("cOOKieFilter", 4, out result, sr, fo, lp, st, fl, ac, fSam, lSam, signalFileName);
+                matlab.Feval("cOOKieFilter", 4, out result, tbAnSignalFile.Text, sr, fo, lp, st, fl, ac, fSam, lSam, anOpenFileDialog.FileName);
                 try
                 {
                     object[] res = result as object[];
                     string mlResult = (String)res[0];
-                    uint[,] args = (uint[,])res[3];
+                    //uint[,] args = (uint[,])res[3];
                     if (mlResult.Equals("OK"))
                         try
                         {
@@ -366,21 +497,26 @@ namespace cOOKie
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-           if (currentDevice != null && !currentDevice.isSaved)
-            { 
-                if(!(MessageBox.Show("OOK Device has unsaved changes - do you want to exit and lose those changes?",
+            if (currentDevice != null && !currentDevice.isSaved)
+            {
+                if (!(MessageBox.Show("OOK Device has unsaved changes - do you want to exit and lose those changes?",
                     "Unsaved Changes",
                     MessageBoxButtons.YesNoCancel,
-                    MessageBoxIcon.Warning)==DialogResult.Yes))
+                    MessageBoxIcon.Warning) == DialogResult.Yes))
                 {
                     e.Cancel = true;
                     return;
                 }
             }
-            
+
             if (!matlab.Equals(null))
             {
                 matlab.Quit();
+            }
+
+            if (brf != null)
+            {
+                brf.close();
             }
         }
 
@@ -390,7 +526,7 @@ namespace cOOKie
             UInt32 sr;
             if (!UInt32.TryParse(tbAnSampleRate.Text, nStyles, cInfo, out sr))
             {
-                errorProviderAn.SetError(tbAnSampleRate, "Invalid sample rate");
+                errorProvider1.SetError(tbAnSampleRate, "Invalid sample rate");
                 return;
             }
 
@@ -411,15 +547,15 @@ namespace cOOKie
             //set pwmWord and start bit dataContents
             tbAnWordContents.Text = pwmWord.dataContents;
             tbAnStartBitContents.Text = pwmWord.sbContents;
-            
+
             //rise/fall stats
             tbAnAvgRisePeriod.Text = pwmWord.avgRisePeriod.ToString();
-            tbAnRiseStDev.Text = Math.Round(pwmWord.riseStDev,4).ToString();
+            tbAnRiseStDev.Text = Math.Round(pwmWord.riseStDev, 4).ToString();
             tbAnAvgFallPeriod.Text = pwmWord.avgFallPeriod.ToString();
             tbAnFallStDev.Text = Math.Round(pwmWord.fallStDev, 4).ToString();
 
             //set Bins label and drop-down list
-            lblAnBins.Text = "Bins("+pwmWord.bins.Count.ToString()+")";
+            lblAnBins.Text = "Bins(" + pwmWord.bins.Count.ToString() + ")";
             var list = from bin in pwmWord.bins select bin.width;
             object[] ar = list.Cast<object>().ToArray();
             cbAnBins.Items.Clear();
@@ -427,13 +563,14 @@ namespace cOOKie
             cbAnBins.Enabled = true;
 
             //set Bits label and drop-down list
-            lblAnBits.Text = "Data Bits ("+pwmWord.dataBits.Count.ToString("d2") + ")";
-            list = Enumerable.Range(1,pwmWord.dataBits.Count);
+            lblAnBits.Text = "Data Bits (" + pwmWord.dataBits.Count.ToString("d2") + ")";
+            list = Enumerable.Range(1, pwmWord.dataBits.Count);
             ar = list.Cast<object>().ToArray();
             cbAnBits.Items.Clear();
             cbAnBits.Items.AddRange(ar);
             cbAnBits.Enabled = true;
             btnAnCurBitPlus.Enabled = true;
+            btnAnMakeDevice.Enabled = true;
 
 
         }
@@ -446,12 +583,12 @@ namespace cOOKie
             tbAnCurBinWidth.Text = binName.ToString();
             tbAnCurBinStDev.Text = Math.Round(bin.stdDev, 4).ToString();
             tbAnCurBinCount.Text = bin.count.ToString();
-            tbAnCurBinBits.Text= "";
-            foreach(var item in pwmWord.dataBits.Select((bit,i) => new {i, bit}))
+            tbAnCurBinBits.Text = "";
+            foreach (var item in pwmWord.dataBits.Select((bit, i) => new { i, bit }))
             {
                 if (binName == item.bit.binName)
                 {
-                    tbAnCurBinBits.Text += (item.i+1).ToString()+" ";
+                    tbAnCurBinBits.Text += (item.i + 1).ToString() + " ";
                 }
             }
         }
@@ -461,15 +598,15 @@ namespace cOOKie
             ComboBox cb = (ComboBox)sender;
             int bitNumber = (int)cb.SelectedItem + pwmWord.startBitsN;
             Bit bit = pwmWord.dataBits.First(b => b.bitPos == bitNumber);
-            
+
             tbAnCurBitPos.Text = bit.bitPos.ToString();
-            
+
             tbAnCurBitWidth.Text = bit.pulseWidth.ToString();
             tbAnCurBitPWDev.Text = Math.Round(bit.pwDeviation, 4).ToString();
 
             tbAnCurBitRTime.Text = bit.riseTime.ToString();
             tbAnCurBitFPeriod.Text = bit.fallPeriod.ToString();
-            tbAnCurBitFDev.Text = Math.Round(bit.fpDeviation,4).ToString();
+            tbAnCurBitFDev.Text = Math.Round(bit.fpDeviation, 4).ToString();
 
             tbAnCurBitFTime.Text = bit.fallTime.ToString();
             tbAnCurBitRPeriod.Text = bit.risePeriod.ToString();
@@ -484,7 +621,7 @@ namespace cOOKie
                 btnAnCurBitMinus.Enabled = true;
             }
 
-            if (cb.SelectedIndex == cb.Items.Count-1)
+            if (cb.SelectedIndex == cb.Items.Count - 1)
             {
                 btnAnCurBitPlus.Enabled = false;
             }
@@ -496,7 +633,7 @@ namespace cOOKie
 
         private void btnAnCurBitPlus_Click(object sender, EventArgs e)
         {
-            if (cbAnBits.SelectedIndex <= cbAnBits.Items.Count) 
+            if (cbAnBits.SelectedIndex <= cbAnBits.Items.Count)
             {
                 cbAnBits.SelectedIndex += 1;
             }
@@ -520,12 +657,12 @@ namespace cOOKie
             UInt32 sr = pwmWord.sampleRate;
 
             tbAnAvgNarrowWidth.Text = Math.Round(((1.0 / sr) * pwmWord.avgNarrowWidth * 1000), 3).ToString("N3") + " ms";
-            tbAnAvgWideWidth.Text   = Math.Round(((1.0 / sr) * pwmWord.avgWideWidth   * 1000), 3).ToString("N3") + " ms";
-            tbAnAvgRisePeriod.Text  = Math.Round(((1.0 / sr) * pwmWord.avgRisePeriod  * 1000), 3).ToString("N3") + " ms";
-            tbAnAvgFallPeriod.Text  = Math.Round(((1.0 / sr) * pwmWord.avgFallPeriod  * 1000), 3).ToString("N3") + " ms";
+            tbAnAvgWideWidth.Text = Math.Round(((1.0 / sr) * pwmWord.avgWideWidth * 1000), 3).ToString("N3") + " ms";
+            tbAnAvgRisePeriod.Text = Math.Round(((1.0 / sr) * pwmWord.avgRisePeriod * 1000), 3).ToString("N3") + " ms";
+            tbAnAvgFallPeriod.Text = Math.Round(((1.0 / sr) * pwmWord.avgFallPeriod * 1000), 3).ToString("N3") + " ms";
             tbAnSBDelay.Text = Math.Round(((1.0 / sr) * pwmWord.startBitDelay * 1000), 3).ToString("N3") + " ms";
             tbAnIWDelay.Text = Math.Round(((1.0 / sr) * pwmWord.interWordDelay * 1000), 3).ToString("N3") + " ms";
-        }                             
+        }
 
         /// <summary>
         /// Change display to sample counts when Samples radio button clicked
@@ -566,21 +703,26 @@ namespace cOOKie
         /// <param name="e"></param>
         private void btnReceive_Click(object sender, EventArgs e)
         {
-            foreach (Control c in errorProviderRx.ContainerControl.Controls)
-                if (errorProviderRx.GetError(c) != "")
+            foreach (Control c in errorProvider1.ContainerControl.Controls)
+                if (errorProvider1.GetError(c) != "")
                 {
                     c.Focus();
                     return;
                 }
 
+            tbRxSdrStatus.AppendText("\r\nReceiving started ...");
+            tbTxSdrStatus.AppendText("\r\nReceiving started ...");
+
             //# of samples = sample rate * time
-            UInt32 N = UInt32.Parse(tbSdrRxSampleRate.Text,nStyles,cInfo) * UInt32.Parse(tbSdrRxRecordTime.Text,nStyles,cInfo);
+            UInt32 N = UInt32.Parse(tbRxSampleRate.Text, nStyles, cInfo) * UInt32.Parse(tbRxRecordTime.Text, nStyles, cInfo);
             Int16[] samples = new Int16[N * 2];   // x2, one for I and one for Q
             string msg;
             samples = brf.bladerf_RX(N, out msg);
             if (msg != "")
             {
-                MessageBox.Show(msg, "Error");
+                MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                tbRxSdrStatus.AppendText("\r\n\r\n****\r\nERROR: "+msg+"\r\n****\r\n");
+                tbTxSdrStatus.AppendText("\r\n\r\n****\r\nERROR: " + msg + "\r\n****\r\n");
                 return;
             }
             //// save to a csv file
@@ -599,22 +741,23 @@ namespace cOOKie
             //}
             //catch
             //{
-            //    Console.WriteLine("Error Opeing or writing to the file.");
+            //    Console.WriteLine("Error Opening or writing to the file.");
             //}
 
             //save as SC16Q11 binary file
             try
             {
-                using (BinaryWriter writer = new BinaryWriter(File.Open(tbRxFolder.Text + '\\' + tbRxFileName.Text, FileMode.Create)))
+                using (BinaryWriter writer = new BinaryWriter(File.Open(rxSaveFileDialog.FileName, FileMode.Create)))
                 {
                     for (int i = 0; i < samples.Length; ++i)
                     {
                         writer.Write(samples[i]);
                     }
                 }
-                Console.WriteLine("File saved.");
-                MessageBox.Show("File Saved");
-
+                //Console.WriteLine("File saved.");
+                //MessageBox.Show("File Saved");
+                tbRxSdrStatus.AppendText("\r\nFile Saved");
+                tbTxSdrStatus.AppendText("\r\nFile Saved");
             }
             catch
             {
@@ -622,20 +765,11 @@ namespace cOOKie
                 MessageBox.Show("Error Opening or writing to the file.", "Error");
             }
 
-            BrfNativeMethods.bladerf_close(brf._sdr);
-                  
         }
 
-        private void cbSdrRxLnaGain_Leave(object sender, EventArgs e)
+        private void tabRxTx_Enter(object sender, EventArgs e)
         {
-            ComboBox cb = (ComboBox)sender;
-            string msg = "";
-            brf.setRxLnaGain(Int32.Parse(cb.Text), out msg);
-        }
-
-        private void tabRx_Enter(object sender, EventArgs e)
-        {
-            if (cbSdrSDR.SelectedIndex == 0)
+            if (cbRxSDR.SelectedIndex == 0)
             {
                 getBrfRxConfig();
             }
@@ -643,97 +777,31 @@ namespace cOOKie
 
         private void getBrfRxConfig()
         {
-            string msg;
-            msg = "";
-            tbSdrRxFrequency.Text = brf.getFrequency(out msg).ToString("N0");
-            tbSdrRxFrequency.Text = (msg == "") ? tbSdrRxFrequency.Text : msg;
+            tbRxFrequency.Text = brf.rx_frequency.ToString("N0");
+            tbRxSampleRate.Text = brf.rx_sampleRate.ToString("N0");
+            tbRxBandwidth.Text = brf.rx_bandwidth.ToString("N0");
+            cbRxLnaGain.SelectedIndex = (int)brf.rx_lna_gain;
+            tbRxVGain1.Text = brf.rx_vgain1.ToString("N0");
+            tbRxVGain2.Text = brf.rx_vgain2.ToString("N0");
+            tbRxNumBuffers.Text = brf.rx_nBuffers.ToString("N0");
+            tbRxBufferSize.Text = brf.rx_samplesPerBuffer.ToString("N0");
+            tbRxNumXfers.Text = brf.rx_nUsbChannels.ToString("N0");
+            tbRxSyncTimeout.Text = brf.rx_syncTimeoutmS.ToString("N0");
 
-            msg = "";
-            tbSdrRxSampleRate.Text = brf.getRxSamplerate(out msg).ToString("N0");
-            tbSdrRxSampleRate.Text = (msg == "") ? tbSdrRxSampleRate.Text : msg;
+            tbTxFrequency.Text = brf.tx_frequency.ToString("N0");
+            tbTxSampleRate.Text = brf.tx_sampleRate.ToString("N0");
+            tbTxBandwidth.Text = brf.tx_bandwidth.ToString("N0");
+            tbTxVGain1.Text = brf.tx_vgain1.ToString("N0");
+            tbTxVGain2.Text = brf.tx_vgain2.ToString("N0");
+            tbTxNumBuffers.Text = brf.tx_nBuffers.ToString("N0");
+            tbTxBufferSize.Text = brf.tx_samplesPerBuffer.ToString("N0");
+            tbTxNumXfers.Text = brf.tx_nUsbChannels.ToString("N0");
+            tbTxSyncTimeout.Text = brf.tx_syncTimeoutmS.ToString("N0");
 
-            msg = "";
-            tbSdrRxBandwidth.Text = brf.getRxBandwidth(out msg).ToString("N0");
-            tbSdrRxBandwidth.Text = (msg == "") ? tbSdrRxBandwidth.Text : msg;
-
-            msg = "";
-            cbSdrRxLnaGain.Text = brf.getRxLnaGain(out msg).ToString("N0");
-            cbSdrRxLnaGain.Text = (msg == "") ? cbSdrRxLnaGain.Text : msg;
-           
-            msg = "";
-            tbSdrRxVGain1.Text = brf.getRxVGain1(out msg).ToString("N0");
-            tbSdrRxVGain1.Text = (msg == "") ? tbSdrRxVGain1.Text : msg;
-
-            msg = "";
-            tbSdrRxVGain2.Text = brf.getRxVGain2(out msg).ToString("N0");
-            tbSdrRxVGain2.Text = (msg == "") ? tbSdrRxVGain2.Text : msg;
-
-            tbSdrRxNumBuffers.Text = brf._nBuffers.ToString("N0");
-            tbSdrRxSamPerBuffer.Text = brf._samplesPerBuffer.ToString("N0");
-            tbSdrRxNumUsbChannels.Text = brf._nUsbChannels.ToString("N0");
-            tbSdrRxSyncTimeout.Text = brf._syncTimeoutmS.ToString("N0");
-
-            if (Double.Parse(tbSdrRxBandwidth.Text) <= double.Parse(tbSdrRxSampleRate.Text))
-            {
-                this.errorProviderRx.SetError(tbSdrRxBandwidth, "Bandwidth <= Samplerate");
-                this.errorProviderRx.SetError(tbSdrRxSampleRate, "Bandwidth <= Samplerate");
-            }
 
         }
 
-        private void tbSdrRxVGain1_Leave(object sender, EventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-            string msg = "";
-            int vg1 = -1;
-            if (!Int32.TryParse(tb.Text, out vg1) )
-            {
-                MessageBox.Show("V Gain 1 is not a valid number","Error");
-            }
-            else
-            {
-                if (!brf.setRxVGain1(vg1, out msg))
-                {
-                    MessageBox.Show(msg, "Error");
-                }
-                else
-                {
-                    tb.Text = brf.getRxVGain1(out msg).ToString();
-                    if (msg != "")
-                    {
-                        MessageBox.Show(msg, "Error");
-                    }
-                }
-            }
-        }
-        
-        private void tbSdrRxVGain2_Leave(object sender, EventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-            string msg = "";
-            int vg2 = -1;
-            if (!Int32.TryParse(tb.Text, out vg2))
-            {
-                MessageBox.Show("V Gain 2 is not a valid number","Error");
-            }
-            else
-            {
-                if (!brf.setRxVGain2(vg2, out msg))
-                {
-                    MessageBox.Show(msg,"Error");
-                }
-                else
-                {
-                    tb.Text = brf.getRxVGain2(out msg).ToString();
-                    if (msg != "")
-                    {
-                        MessageBox.Show(msg, "Error");
-                    }
-                }
-            }
-        }
-
-        private void tbSdrRxNumBuffers_Validating(object sender, CancelEventArgs e)
+        private void tbNumBuffers_Validating(object sender, CancelEventArgs e)
         {
             TextBox tb = (TextBox)sender;
             string msg;
@@ -741,78 +809,32 @@ namespace cOOKie
             if (!UInt32.TryParse(tb.Text, out val))
             {
                 e.Cancel = true;
-                this.errorProviderRx.SetError(tb, "Not a positive integer");
+                this.errorProvider1.SetError(tb, "Not a positive integer");
             }
             else
             {
-                brf._nBuffers = val;
-                if (!brf.rxSyncConfig(out msg))
+                brf.rx_nBuffers = val;
+                string module;
+
+                if (tb.Name.Contains("Rx"))
+                    module = "RX";
+                else if (tb.Name.Contains("Tx"))
+                    module = "TX";
+                else
+                    throw new ApplicationException("Invalid textbox name: " + tb.Name);
+
+                if (!brf.syncConfig(module, out msg))
                 {
                     e.Cancel = true;
-                    this.errorProviderRx.SetError(tb, msg);
+                    this.errorProvider1.SetError(tb, msg);
                 }
                 else
-                {
-                    this.errorProviderRx.SetError(tb, msg);
-                }
+                    this.errorProvider1.SetError(tb, msg);
+
             }
         }
 
-        private void tbSdrRxSamPerBuffer_Validating(object sender, CancelEventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-            string msg;
-            UInt32 val;
-            if (!UInt32.TryParse(tb.Text,nStyles, cInfo, out val))
-            {
-                e.Cancel = true;
-                this.errorProviderRx.SetError(tb, "Not a positive integer");
-            }
-            else
-            {
-                ///round down to multiple of 1024  
-                val = ((val / 1024) + 1) * 1024;
-                brf._samplesPerBuffer = val;
-                if (!brf.rxSyncConfig(out msg))
-                {
-                    e.Cancel = true;
-                    this.errorProviderRx.SetError(tb, msg);
-                }
-                else
-                {
-                    this.errorProviderRx.SetError(tb, "");
-                    tb.Text = val.ToString("N0");
-                }
-            }
-        }
-
-        private void tbSdrRxNumUsbChannels_Validating(object sender, CancelEventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-            string msg;
-            UInt32 val;
-            if (!UInt32.TryParse(tb.Text, out val))
-            {
-                e.Cancel = true;
-                this.errorProviderRx.SetError(tb, "Not a positive integer");
-            }
-            else
-            {
-                brf._nUsbChannels = val;
-                if (!brf.rxSyncConfig(out msg))
-                {
-                    e.Cancel = true;
-                    this.errorProviderRx.SetError(tb, msg);
-                }
-                else
-                {
-                    this.errorProviderRx.SetError(tb, msg);
-                }
-            }
-
-        }
-
-        private void tbSdrRxSyncTimeout_Validating(object sender, CancelEventArgs e)
+        private void tbBufferSize_Validating(object sender, CancelEventArgs e)
         {
             TextBox tb = (TextBox)sender;
             string msg;
@@ -820,119 +842,185 @@ namespace cOOKie
             if (!UInt32.TryParse(tb.Text, nStyles, cInfo, out val))
             {
                 e.Cancel = true;
-                this.errorProviderRx.SetError(tb, "Not a positive integer");
+                this.errorProvider1.SetError(tb, "Not a positive integer");
             }
             else
             {
-                brf._syncTimeoutmS = val;
-                if (!brf.rxSyncConfig(out msg))
+                ///round down to multiple of 1024  
+                val = ((val / 1024) + 1) * 1024;
+                brf.rx_samplesPerBuffer = val;
+
+                string module;
+                if (tb.Name.Contains("Rx"))
+                    module = "RX";
+                else if (tb.Name.Contains("Tx"))
+                    module = "TX";
+                else
+                    throw new ApplicationException("Invalid textbox name: " + tb.Name);
+
+                if (!brf.syncConfig(module, out msg))
                 {
                     e.Cancel = true;
-                    this.errorProviderRx.SetError(tb, msg);
+                    this.errorProvider1.SetError(tb, msg);
                 }
                 else
                 {
-                    this.errorProviderRx.SetError(tb, msg);
+                    this.errorProvider1.SetError(tb, "");
+                    tb.Text = val.ToString("N0");
+                }
+            }
+        }
+
+        private void tbNumXfers_Validating(object sender, CancelEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            string msg;
+            UInt32 val;
+            if (!UInt32.TryParse(tb.Text, out val))
+            {
+                e.Cancel = true;
+                this.errorProvider1.SetError(tb, "Not a positive integer");
+            }
+            else
+            {
+                brf.rx_nUsbChannels = val;
+                string module;
+                if (tb.Name.Contains("Rx"))
+                    module = "RX";
+                else if (tb.Name.Contains("Tx"))
+                    module = "TX";
+                else
+                    throw new ApplicationException("Invalid textbox name: " + tb.Name);
+
+                if (!brf.syncConfig(module, out msg))
+                {
+                    e.Cancel = true;
+                    this.errorProvider1.SetError(tb, msg);
+                }
+                else
+                {
+                    this.errorProvider1.SetError(tb, msg);
+                    tb.Text = val.ToString("N0");
                 }
             }
 
         }
 
-        private void tbSdrRxSampleRate_Validating(object sender, CancelEventArgs e)
+        private void tbSyncTimeout_Validating(object sender, CancelEventArgs e)
         {
             TextBox tb = (TextBox)sender;
-            double sr = 0.0;
-            if (!Double.TryParse(tb.Text.Replace(",", ""), nStyles, cInfo, out sr))
+            string msg;
+            UInt32 val;
+            if (!UInt32.TryParse(tb.Text, nStyles, cInfo, out val))
             {
                 e.Cancel = true;
-                this.errorProviderRx.SetError(tb, "Not a valid number");
-                return;
+                this.errorProvider1.SetError(tb, "Not a positive integer");
+            }
+            else
+            {
+                string module;
+                if (tb.Name.Contains("Rx"))
+                    module = "RX";
+                else if (tb.Name.Contains("Tx"))
+                    module = "TX";
+                else
+                    throw new ApplicationException("Invalid textbox name: " + tb.Name);
+                brf.rx_syncTimeoutmS = val;
+
+                if (!brf.syncConfig(module, out msg))
+                {
+                    e.Cancel = true;
+                    this.errorProvider1.SetError(tb, msg);
+                }
+                else
+                {
+                    this.errorProvider1.SetError(tb, msg);
+                    tb.Text = val.ToString("N0");
+                }
             }
 
-            string msg = "";
-            sr = brf.setSampleRate(sr, out msg);
-            if (msg != "")
-            {
-                e.Cancel = true;
-                this.errorProviderRx.SetError(tb, msg);
-                return;
-            }
-
-            msg = "";
-            sr = brf.getRxSamplerate(out msg);
-            if (msg != "")
-            {
-                e.Cancel = true;
-                this.errorProviderRx.SetError(tb, msg);
-                return;
-            }
-            tb.Text = sr.ToString("N0");
-
-            if (sr <= Double.Parse(tbSdrRxBandwidth.Text))
-            {
-                this.errorProviderRx.SetError(tb, "Sample rate <= Bandwidth");
-                this.errorProviderRx.SetError(tbSdrRxBandwidth, "Sample rate <= Bandwidth");
-                return;
-            }
-            this.errorProviderRx.SetError(tb, "");
         }
 
-        private void tbSdrRxBandwidth_Validating(object sender, CancelEventArgs e)
+        private void tbSampleRate_Validating(object sender, CancelEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            double val;
+            string msg = "";
+            string module;
+            PropertyInfo prop;
+
+            //configure for RX or TX module and property
+            if (tb.Name.Contains("Rx"))
+            {
+                module = "RX";
+                prop = brf.GetType().GetProperty("rx_sampleRate");
+            }
+            else if (tb.Name.Contains("Tx"))
+            {
+                module = "TX";
+                prop = brf.GetType().GetProperty("tx_sampleRate");
+            }
+            else
+                throw new ApplicationException("Invalid textbox name: " + tb.Name);
+
+            if (!Double.TryParse(tb.Text, nStyles, cInfo, out val) || !brf.setSampleRate(val, module, out msg))
+            {
+                MessageBox.Show("Invald sample rate: " + tb.Text + "\n" + msg + "\nResetting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+            }
+            tb.Text = ((Double)prop.GetValue(brf)).ToString("N0");
+
+        }
+
+        private void tbBandwidth_Validating(object sender, CancelEventArgs e)
         {
             TextBox tb = (TextBox)sender;
             uint bw;
-            if (!UInt32.TryParse(tb.Text.Replace(",", ""), nStyles, cInfo, out bw))
-            {
-                e.Cancel = true;
-                this.errorProviderRx.SetError(tb,"Not a valid number.");
-                return;
-            }
-
             string msg = "";
-            bw = brf.setRxBandwidth(bw, out msg);
-            if (msg != "")
-            {
-                e.Cancel = true;
-                this.errorProviderRx.SetError(tb, msg);
-                return;
-           }
+            string module;
+            PropertyInfo prop;
 
-            msg = "";
-            bw = brf.getRxBandwidth(out msg);
-            if (msg != "")
+            if (tb.Name.Contains("Rx"))
             {
-                e.Cancel = true;
-                this.errorProviderRx.SetError(tb, msg);
+                module = "RX";
+                prop = brf.GetType().GetProperty("rx_bandwidth");
             }
-            tb.Text = bw.ToString("N0");
-
-            if (bw >= Double.Parse(tbSdrRxSampleRate.Text))
+            else if (tb.Name.Contains("Tx"))
             {
-                this.errorProviderRx.SetError(tb, "Sample rate <= Bandwidth");
-                this.errorProviderRx.SetError(tbSdrRxSampleRate, "Sample rate <= Bandwidth");
-                return;
+                module = "TX";
+                prop = brf.GetType().GetProperty("tx_bandwidth");
             }
-            this.errorProviderRx.SetError(tb, "");
+            else
+                throw new ApplicationException("Invalid textbox name: " + tb.Name);
 
+
+            if (!UInt32.TryParse(tb.Text, nStyles, cInfo, out bw) || !brf.setBandwidth(bw, module, out msg))
+            {
+                MessageBox.Show("Invald bandwidth: " + tb.Text + "\n" + msg + "\nResetting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+
+            }
+            tb.Text = ((UInt32)prop.GetValue(brf)).ToString("N0");
         }
 
-        private void tbSdrRxRecordTime_Validating(object sender, CancelEventArgs e)
+        private void tbRxRecordTime_Validating(object sender, CancelEventArgs e)
         {
             TextBox tb = (TextBox)sender;
             UInt16 val;
             if (!UInt16.TryParse(tb.Text, out val) || val < 1 || val > 10)
             {
-                errorProviderRx.SetError(tb, "Must be integer between 1 and 10");
+                errorProvider1.SetError(tb, "Must be integer between 1 and 10");
                 e.Cancel = true;
             }
         }
 
         private void btnAnMakeDevice_Click(object sender, EventArgs e)
         {
-            //get sample rate
-            //double sr = Double.Parse(tbAnSampleRate.Text, nStyles, cInfo);
+            if (pwmWord == null)
+                return;
+
             UInt32 sr = pwmWord.sampleRate;
-            double bitWidth = (pwmWord.syncEdge == OokDevice.SyncEdges.Falling)?pwmWord.avgFallPeriod:pwmWord.avgRisePeriod;
+            double bitWidth = (pwmWord.syncEdge == OokDevice.SyncEdges.Falling) ? pwmWord.avgFallPeriod : pwmWord.avgRisePeriod;
 
             try
             {
@@ -973,8 +1061,7 @@ namespace cOOKie
             tbDvWordPad.Enabled = true;
 
             btnDvSaveDevice.Enabled = true;
-            btnDvSaveAsDevice.Enabled = true;
-            
+
             //signal creation
             tbDvSampleRate.Text = pwmWord.sampleRate.ToString("N0");
             tbDvWordContents.Text = pwmWord.dataContents;
@@ -984,11 +1071,6 @@ namespace cOOKie
             tabControl1.SelectedTab = tabDevice;
             //tabDevice.Select();
             tbDvDeviceName.Focus();
-        }
-
-        private void btnAnSelectFolder_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void btnDevSaveDevice_Click(object sender, EventArgs e)
@@ -1002,7 +1084,7 @@ namespace cOOKie
             bool ok = true;
             foreach (Control c in gbDvDevice.Controls)
             {
-                if (errorProviderDv.GetError(c) != "")
+                if (errorProvider1.GetError(c) != "")
                 {
                     ok = false;
                 }
@@ -1023,54 +1105,52 @@ namespace cOOKie
             }
 
             string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\devices\";
-            if (!Directory.Exists(path))
+            //if (!Directory.Exists(path))
+            //{
+            //    DialogResult dr = MessageBox.Show("Devices folder does not exist - do you want to create it?", "Folder Missing", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            //    if (dr == DialogResult.Cancel)
+            //    {
+            //        return;
+            //    }
+
+            //    if (dr == DialogResult.Yes)
+            //    {
+            //        try
+            //        {
+            //            Directory.CreateDirectory(path);
+            //        }
+            //        catch
+            //        {
+            //            MessageBox.Show("Cannot create directory: \n" + path, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //            return;
+            //        }
+            //    }
+            //}
+
+            dvSaveFileDialog.FileName = currentDevice.name;
+            dvSaveFileDialog.Title = "Save OOK Device File";
+            dvSaveFileDialog.Filter = "JSON File|*.json";
+            dvSaveFileDialog.ShowDialog();
+
+            if (dvSaveFileDialog.FileName != "")
             {
-                DialogResult dr = MessageBox.Show("Devices folder does not exist - do you want to create it?", "Folder Missing", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (dr == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                if (dr == DialogResult.Yes)
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Cannot create directory: \n" + path, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                }
-            }
-
-            SaveFileDialog svd = new SaveFileDialog();
-            svd.FileName = currentDevice.name;
-            svd.Title = "Save OOK Device File";
-            svd.Filter = "JSON File|*.json";
-            svd.InitialDirectory = path;
-            svd.ShowDialog();
-
-            if (svd.FileName != "")
-            {
-                File.WriteAllText(svd.FileName, JsonConvert.SerializeObject(currentDevice));
+                File.WriteAllText(dvSaveFileDialog.FileName, JsonConvert.SerializeObject(currentDevice));
                 currentDevice.isSaved = true;
             }
 
- 
+
         }
 
         private void SampleRate_Validating(object sender, CancelEventArgs e)
         {
             // sample rate can be blank
-            Control ct = (Control)sender; 
+            Control ct = (Control)sender;
             double sr = 0;
             if (!ct.Text.Equals(""))
             {
                 if (!Double.TryParse(ct.Text, nStyles, cInfo, out sr) || sr < 2e6 || sr > 8e6)
                 {
-                    MessageBox.Show("Sample Rate has a missing or incorrect value.", "Error",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Sample Rate has a missing or incorrect value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
             }
@@ -1082,11 +1162,11 @@ namespace cOOKie
             TextBox tb = (TextBox)sender;
             if (!currentDevice.setName(tb.Text, out msg))
             {
-                errorProviderDv.SetError(tbDvDeviceName, msg);
+                errorProvider1.SetError(tbDvDeviceName, msg);
             }
             else
             {
-                errorProviderDv.SetError(tbDvDeviceName, "");
+                errorProvider1.SetError(tbDvDeviceName, "");
             }
         }
 
@@ -1095,7 +1175,7 @@ namespace cOOKie
             bool ok = true;
             if (currentDevice != null && currentDevice.isSaved == false)
             {
-                if (!(MessageBox.Show("Current device is not saved! Do you want to continue and lose changes?", 
+                if (!(MessageBox.Show("Current device is not saved! Do you want to continue and lose changes?",
                     "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes))
                 {
                     return;
@@ -1135,51 +1215,50 @@ namespace cOOKie
             tbDvWordPad.Text = "";
 
             btnDvSaveDevice.Enabled = ok;
-            btnDvSaveAsDevice.Enabled = ok;
 
             //signal settings
             tbDvSampleRate.Enabled = ok;
             tbDvWordContents.Enabled = ok;
             tbDvRepetitions.Enabled = ok;
             btnDvMakeSignal.Enabled = ok;
-           
+
 
         }
 
         private void tbDvSbContents_Validating(object sender, CancelEventArgs e)
         {
-            TextBox tb = (TextBox) sender;
-           
+            TextBox tb = (TextBox)sender;
+
             string msg;
             if (!currentDevice.setStartBits(tb.Text, out msg))
             {
-                errorProviderDv.SetError(tbDvSbContents, msg);
+                errorProvider1.SetError(tbDvSbContents, msg);
             }
             else
             {
-                errorProviderDv.SetError(tbDvSbContents, "");
+                errorProvider1.SetError(tbDvSbContents, "");
             }
-            
+
         }
 
         private void tbDvSbPad_Validating(object sender, CancelEventArgs e)
         {
             TextBox tb = (TextBox)sender;
             double val;
-            if (!(Double.TryParse(tb.Text,nStyles,cInfo,out val)) || val < 0 || val > 1000)
+            if (!(Double.TryParse(tb.Text, nStyles, cInfo, out val)) || val < 0 || val > 1000)
             {
-                errorProviderDv.SetError(tb, "Not a valid number");
+                errorProvider1.SetError(tb, "Not a valid number");
                 return;
             }
 
             string msg;
             if (!currentDevice.setStartBitPad(val, out msg))
             {
-                errorProviderDv.SetError(tb, msg);
+                errorProvider1.SetError(tb, msg);
             }
             else
             {
-                errorProviderDv.SetError(tb, "");
+                errorProvider1.SetError(tb, "");
             }
         }
 
@@ -1189,18 +1268,18 @@ namespace cOOKie
             int val;
             if (!(Int32.TryParse(tb.Text, nStyles, cInfo, out val)) || val < 0 || val > 1000)
             {
-                errorProviderDv.SetError(tb, "Not a valid number");
+                errorProvider1.SetError(tb, "Not a valid number");
                 return;
             }
 
             string msg;
             if (!currentDevice.setNDataBits(val, out msg))
             {
-                errorProviderDv.SetError(tb, msg);
+                errorProvider1.SetError(tb, msg);
             }
             else
             {
-                errorProviderDv.SetError(tb, "");
+                errorProvider1.SetError(tb, "");
             }
         }
 
@@ -1210,18 +1289,18 @@ namespace cOOKie
             double val;
             if (!(Double.TryParse(tb.Text, nStyles, cInfo, out val)) || val < 0 || val > 1000)
             {
-                errorProviderDv.SetError(tb, "Not a valid number");
+                errorProvider1.SetError(tb, "Not a valid number");
                 return;
             }
 
             string msg;
             if (!currentDevice.setNarrowWidth_ms(val, out msg))
             {
-                errorProviderDv.SetError(tb, msg);
+                errorProvider1.SetError(tb, msg);
             }
             else
             {
-                errorProviderDv.SetError(tb, "");
+                errorProvider1.SetError(tb, "");
             }
         }
 
@@ -1231,18 +1310,18 @@ namespace cOOKie
             double val;
             if (!(Double.TryParse(tb.Text, nStyles, cInfo, out val)) || val < 0 || val > 1000)
             {
-                errorProviderDv.SetError(tb, "Not a valid number");
+                errorProvider1.SetError(tb, "Not a valid number");
                 return;
             }
 
             string msg;
             if (!currentDevice.setWideWidth_ms(val, out msg))
             {
-                errorProviderDv.SetError(tb, msg);
+                errorProvider1.SetError(tb, msg);
             }
             else
             {
-                errorProviderDv.SetError(tb, "");
+                errorProvider1.SetError(tb, "");
             }
         }
 
@@ -1252,18 +1331,18 @@ namespace cOOKie
             double val;
             if (!(Double.TryParse(tb.Text, nStyles, cInfo, out val)) || val < 0 || val > 1000)
             {
-                errorProviderDv.SetError(tb, "Not a valid number");
+                errorProvider1.SetError(tb, "Not a valid number");
                 return;
             }
 
             string msg;
             if (!currentDevice.setBitPeriod_ms(val, out msg))
             {
-                errorProviderDv.SetError(tb, msg);
+                errorProvider1.SetError(tb, msg);
             }
             else
             {
-                errorProviderDv.SetError(tb, "");
+                errorProvider1.SetError(tb, "");
             }
         }
 
@@ -1274,11 +1353,11 @@ namespace cOOKie
             string msg;
             if (!currentDevice.setSyncEdge(se, out msg))
             {
-                errorProviderDv.SetError(cb, msg);
+                errorProvider1.SetError(cb, msg);
             }
             else
             {
-                errorProviderDv.SetError(cb, "");
+                errorProvider1.SetError(cb, "");
             }
         }
 
@@ -1288,31 +1367,31 @@ namespace cOOKie
             double val;
             if (!(Double.TryParse(tb.Text, nStyles, cInfo, out val)) || val < 0 || val > 1000)
             {
-                errorProviderDv.SetError(tb, "Not a valid number");
+                errorProvider1.SetError(tb, "Not a valid number");
                 return;
             }
 
             string msg;
             if (!currentDevice.setWordPad_ms(val, out msg))
             {
-                errorProviderDv.SetError(tb, msg);
+                errorProvider1.SetError(tb, msg);
             }
             else
             {
-                errorProviderDv.SetError(tb, "");
+                errorProvider1.SetError(tb, "");
             }
         }
 
         private void btnDvMakeSignal_Click(object sender, EventArgs e)
         {
-            if (currentDevice == null) 
+            if (currentDevice == null)
             {
                 MessageBox.Show("The current OOK device is not defined", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             string msg;
-            if (!currentDevice.isValid) 
+            if (!currentDevice.isValid)
             {
                 if (!currentDevice.validate(out msg))
                 {
@@ -1327,9 +1406,9 @@ namespace cOOKie
             tbDvRepetitions.Focus();
             tbDvSampleRate.Focus();
 
-            if (errorProviderDv.GetError(tbDvSampleRate) != "" ||
-                errorProviderDv.GetError(tbDvWordContents) != "" ||
-                errorProviderDv.GetError(tbDvRepetitions) != "")
+            if (errorProvider1.GetError(tbDvSampleRate) != "" ||
+                errorProvider1.GetError(tbDvWordContents) != "" ||
+                errorProvider1.GetError(tbDvRepetitions) != "")
             {
                 MessageBox.Show("One or more signal settings is invalid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -1354,7 +1433,7 @@ namespace cOOKie
             }
 
             object result = null;
-            try 
+            try
             {
                 matlab.Feval("PlotSignal", 1, out result, mlSignal);
             }
@@ -1390,20 +1469,16 @@ namespace cOOKie
                 }
             }
 
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "JSON Files (*.json)|*.json";
-            string path = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\devices\";
-            
-            ofd.InitialDirectory = path;
-            DialogResult result = ofd.ShowDialog();
+            dvOpenFileDialog.Filter = "JSON Files (*.json)|*.json";
+            DialogResult result = dvOpenFileDialog.ShowDialog();
             if (!(result == DialogResult.OK)) // Test result.
             {
                 return;
             }
 
             //currentDevice = new OokDevice();
-            currentDevice = JsonConvert.DeserializeObject<OokDevice>(File.ReadAllText(ofd.FileName));
-            
+            currentDevice = JsonConvert.DeserializeObject<OokDevice>(File.ReadAllText(dvOpenFileDialog.FileName));
+
             tbDvDataBitPeriod.Enabled = true;
             tbDvDeviceName.Enabled = true;
             tbDvNarrowPW.Enabled = true;
@@ -1426,7 +1501,6 @@ namespace cOOKie
             tbDvWordPad.Text = currentDevice.wordPad_ms.ToString("N3");
 
             btnDvSaveDevice.Enabled = true;
-            btnDvSaveAsDevice.Enabled = true;
 
             //signal settings
             tbDvSampleRate.Enabled = true;
@@ -1486,8 +1560,8 @@ namespace cOOKie
                 }
                 catch (Exception ee)
                 {
-                    MessageBox.Show("Error Opening or writing to the file:\n"+ee.Message,
-                        "File Save Error",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    MessageBox.Show("Error Opening or writing to the file:\n" + ee.Message,
+                        "File Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -1497,5 +1571,191 @@ namespace cOOKie
 
         }
 
+        private void btnTxOpenFile_Click(object sender, EventArgs e)
+        {
+            // Show the dialog and get result.
+            txOpenFileDialog.Filter = "BladeRF files (*.SC16Q11)|*.SC16Q11|All files (*.*)|*.*";
+            DialogResult result = txOpenFileDialog.ShowDialog();
+            if (!(result == DialogResult.OK)) // Test result.
+            {
+                return;
+            }
+
+            tbTxFileName.Text = Path.GetFileName(txOpenFileDialog.FileName);
+            btnTxTransmit.Enabled = (brf != null);
+            btnTxViewSignal.Enabled = true;
+
+            //load signal from file
+            var tempArray = File.ReadAllBytes(txOpenFileDialog.FileName);
+            transmittedSignal = new Int16[tempArray.Length / 2];
+
+            for (int i = 0; i < tempArray.Length; i += 2)
+            {
+                transmittedSignal[i / 2] = (Int16)(tempArray[i] + tempArray[i + 1] * 256);
+            }
+
+
+        }
+
+        private void tbFrequency_Validating(object sender, CancelEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            string msg = "";
+            UInt32 val;
+            string module;
+            PropertyInfo prop;
+
+            if (tb.Name.Contains("Rx"))
+            {
+                module = "RX";
+                prop = brf.GetType().GetProperty("rx_frequency");
+            }
+            else if (tb.Name.Contains("Tx"))
+            {
+                module = "TX";
+                prop = brf.GetType().GetProperty("tx_frequency");
+            }
+            else
+            {
+                throw new ApplicationException("Invalid textbox name: " + tb.Name);
+            }
+
+            if (!UInt32.TryParse(tb.Text, nStyles, cInfo, out val) || !brf.setFrequency(val, module, out msg))
+            {
+                MessageBox.Show("Invald frequency: " + tb.Text + "\n" + msg + "\nResetting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+            }
+            tb.Text = ((UInt32)prop.GetValue(brf)).ToString("N0");
+        }
+
+        private void cbRxLnaGain_Validating(object sender, CancelEventArgs e)
+        {
+            ComboBox cb = (ComboBox)sender;
+            string msg = "";
+            brf.setRxLnaGain(cb.SelectedIndex, out msg);
+            cb.SelectedIndex = (int)brf.rx_lna_gain;
+        }
+
+        private void tbRxVGain1_Validating(object sender, CancelEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            string msg = "";
+            int vg1;
+            if (!Int32.TryParse(tb.Text, out vg1) || !brf.setRxVGain1(vg1, out msg))
+            {
+                MessageBox.Show("Invald Vgain1: " + tb.Text + "\n" + msg + "\nResetting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+            }
+            tb.Text = brf.rx_vgain1.ToString("N0");
+
+        }
+
+        private void tbRxVGain2_Validating(object sender, CancelEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            string msg = "";
+            int vg2;
+            if (!Int32.TryParse(tb.Text, out vg2) || !brf.setRxVGain2(vg2, out msg))
+            {
+                MessageBox.Show("Invald Vgain2: " + tb.Text + "\n" + msg + "\nResetting", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+            }
+            tb.Text = brf.rx_vgain2.ToString("N0");
+
+        }
+
+        private void tbTxDelay_Validating(object sender, CancelEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            uint val;
+            if (!UInt32.TryParse(tb.Text, nStyles, cInfo, out val) || val > 10000)
+            {
+                errorProvider1.SetError(tb, "Not a integer between 0 and 10000");
+                e.Cancel = true;
+            }
+            else
+                errorProvider1.SetError(tb, "");
+        }
+
+        private void tbTxCount_Validating(object sender, CancelEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            uint val;
+            if (!UInt32.TryParse(tb.Text, nStyles, cInfo, out val) || val > 100 || val < 1)
+            {
+                errorProvider1.SetError(tb, "Not a integer between 1 and 100");
+                e.Cancel = true;
+            }
+            else
+                errorProvider1.SetError(tb, "");
+
+        }
+
+        private void btnTxTransmit_Click(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+
+            foreach (Control c in gbTxSignalOptions.Controls)
+            {
+                if(errorProvider1.GetError(c) != "")
+                    return;
+            }
+
+            tbRxSdrStatus.AppendText("\r\nTransmission started...");
+            tbTxSdrStatus.AppendText("\r\nTransmission started...");
+
+            int repeat = int.Parse(tbTxCount.Text);
+            string msg;
+            if (!brf.bladerf_TX(transmittedSignal, repeat, out msg))
+            {
+                MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                tbRxSdrStatus.AppendText("\r\n\r\n****\r\nERROR: " + msg + "\r\n****\r\n");
+                tbTxSdrStatus.AppendText("\r\n\r\n****\r\nERROR: " + msg + "\r\n****\r\n");
+                return;
+            }
+
+            tbRxSdrStatus.AppendText("\r\nTransmission completed");
+            tbTxSdrStatus.AppendText("\r\nTransmission completed");
+
+        }
+
+        private void btnTxViewSignal_Click(object sender, EventArgs e)
+        {
+            if (transmittedSignal == null)
+                return;
+
+            // convert signal from IQ to magnitude for plotting in MATLAB
+            int[] mlSignal = new int[transmittedSignal.Length / 2];
+            for (int i = 0; i < transmittedSignal.Length; i += 2)
+            {
+                // calculate magnitude of complex number 
+                mlSignal[i / 2] = (int)Math.Sqrt(Math.Pow(transmittedSignal[i], 2) + Math.Pow(transmittedSignal[i + 1], 2));
+            }
+
+            object result = null;
+            try
+            {
+                matlab.Feval("PlotSignal", 1, out result, mlSignal);
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show(ee.Message, "Error: Unhandled MATLAB Exception");
+                return;
+            }
+
+            try
+            {
+                object[] res = result as object[];
+                string mlResult = (String)res[0];
+            }
+            catch (Exception ee)
+            {
+                MessageBox.Show(ee.Message, "Error: Matlab results cannot be parsed");
+                return;
+            }
+
+            MessageBox.Show("Signal plot is being displayed in a MATLAB window", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
     }
 }

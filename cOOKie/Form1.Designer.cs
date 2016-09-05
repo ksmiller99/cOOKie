@@ -31,24 +31,29 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.ttSdr = new System.Windows.Forms.ToolTip(this.components);
-            this.tbSdrArguments = new System.Windows.Forms.TextBox();
-            this.tbSdrRxFrequency = new System.Windows.Forms.TextBox();
-            this.tbSdrRxSampleRate = new System.Windows.Forms.TextBox();
-            this.tbSdrRxBandwidth = new System.Windows.Forms.TextBox();
-            this.cbSdrRxLnaGain = new System.Windows.Forms.ComboBox();
-            this.tbSdrRxNumBuffers = new System.Windows.Forms.TextBox();
-            this.tbSdrRxSamPerBuffer = new System.Windows.Forms.TextBox();
-            this.tbSdrRxNumUsbChannels = new System.Windows.Forms.TextBox();
-            this.tbSdrRxSyncTimeout = new System.Windows.Forms.TextBox();
-            this.cbSdrSDR = new System.Windows.Forms.ComboBox();
+            this.tbRxFrequency = new System.Windows.Forms.TextBox();
+            this.tbRxSampleRate = new System.Windows.Forms.TextBox();
+            this.tbRxBandwidth = new System.Windows.Forms.TextBox();
+            this.cbRxLnaGain = new System.Windows.Forms.ComboBox();
+            this.tbRxNumBuffers = new System.Windows.Forms.TextBox();
+            this.tbRxBufferSize = new System.Windows.Forms.TextBox();
+            this.tbRxNumXfers = new System.Windows.Forms.TextBox();
+            this.tbRxSyncTimeout = new System.Windows.Forms.TextBox();
+            this.cbRxSDR = new System.Windows.Forms.ComboBox();
+            this.tbTxBandwidth = new System.Windows.Forms.TextBox();
+            this.tbTxSampleRate = new System.Windows.Forms.TextBox();
+            this.tbTxFrequency = new System.Windows.Forms.TextBox();
+            this.cbTxSDR = new System.Windows.Forms.ComboBox();
+            this.tbTxSyncTimeout = new System.Windows.Forms.TextBox();
+            this.tbTxNumXfers = new System.Windows.Forms.TextBox();
+            this.tbTxBufferSize = new System.Windows.Forms.TextBox();
+            this.tbTxNumBuffers = new System.Windows.Forms.TextBox();
             this.ttTxDelay = new System.Windows.Forms.ToolTip(this.components);
             this.tbTxDelay = new System.Windows.Forms.TextBox();
             this.ttTxCount = new System.Windows.Forms.ToolTip(this.components);
             this.tbTxCount = new System.Windows.Forms.TextBox();
             this.ttTxParameters = new System.Windows.Forms.ToolTip(this.components);
-            this.tbTxParam = new System.Windows.Forms.TextBox();
             this.ttRxTab = new System.Windows.Forms.ToolTip(this.components);
-            this.btnAnSelectFolder = new System.Windows.Forms.Button();
             this.btnAnSelectFile = new System.Windows.Forms.Button();
             this.tbRxFileName = new System.Windows.Forms.TextBox();
             this.rbRxInputRaw = new System.Windows.Forms.RadioButton();
@@ -56,7 +61,6 @@
             this.cbRxFormat = new System.Windows.Forms.ComboBox();
             this.tbRxFilter = new System.Windows.Forms.TextBox();
             this.btnFilterSelect = new System.Windows.Forms.Button();
-            this.btnRxSelectFolder = new System.Windows.Forms.Button();
             this.btnRxSelectFile = new System.Windows.Forms.Button();
             this.openFilterDialog = new System.Windows.Forms.OpenFileDialog();
             this.ttRxSelectFilter = new System.Windows.Forms.ToolTip(this.components);
@@ -76,8 +80,7 @@
             this.tbAnWordContents = new System.Windows.Forms.TextBox();
             this.tbAnAvgRisePeriod = new System.Windows.Forms.TextBox();
             this.tbAnAvgFallPeriod = new System.Windows.Forms.TextBox();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.openRecordFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.anOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.tabAnalyze = new System.Windows.Forms.TabPage();
             this.gbAnWordSummary = new System.Windows.Forms.GroupBox();
             this.btnAnMakeDevice = new System.Windows.Forms.Button();
@@ -143,8 +146,6 @@
             this.label24 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
             this.btnAnFilter = new System.Windows.Forms.Button();
-            this.tbAnFolder = new System.Windows.Forms.TextBox();
-            this.label31 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
@@ -156,7 +157,6 @@
             this.gbDvDevice = new System.Windows.Forms.GroupBox();
             this.btnDvOpenDevice = new System.Windows.Forms.Button();
             this.btnDvNewDevice = new System.Windows.Forms.Button();
-            this.btnDvSaveAsDevice = new System.Windows.Forms.Button();
             this.btnDvSaveDevice = new System.Windows.Forms.Button();
             this.tbDvWordPad = new System.Windows.Forms.TextBox();
             this.cbDvSyncEdge = new System.Windows.Forms.ComboBox();
@@ -183,24 +183,37 @@
             this.tbDvWordContents = new System.Windows.Forms.TextBox();
             this.label65 = new System.Windows.Forms.Label();
             this.tabTransmit = new System.Windows.Forms.TabPage();
+            this.label76 = new System.Windows.Forms.Label();
+            this.tbTxSdrStatus = new System.Windows.Forms.TextBox();
+            this.gbTxOptions = new System.Windows.Forms.GroupBox();
+            this.label71 = new System.Windows.Forms.Label();
+            this.label72 = new System.Windows.Forms.Label();
+            this.label73 = new System.Windows.Forms.Label();
+            this.label74 = new System.Windows.Forms.Label();
+            this.label69 = new System.Windows.Forms.Label();
+            this.label70 = new System.Windows.Forms.Label();
+            this.tbTxVGain2 = new System.Windows.Forms.TextBox();
+            this.tbTxVGain1 = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.label68 = new System.Windows.Forms.Label();
+            this.gbTxSignalOptions = new System.Windows.Forms.GroupBox();
+            this.btnTxViewSignal = new System.Windows.Forms.Button();
+            this.btnTxOpenFile = new System.Windows.Forms.Button();
+            this.tbTxFileName = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnTransmit = new System.Windows.Forms.Button();
-            this.tabRx = new System.Windows.Forms.TabPage();
-            this.tbSdrRxRecordTime = new System.Windows.Forms.TextBox();
+            this.btnTxTransmit = new System.Windows.Forms.Button();
+            this.tabReceive = new System.Windows.Forms.TabPage();
+            this.rbRxOptions = new System.Windows.Forms.GroupBox();
+            this.tbRxRecordTime = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label54 = new System.Windows.Forms.Label();
             this.label53 = new System.Windows.Forms.Label();
-            this.tbSdrRxVGain2 = new System.Windows.Forms.TextBox();
-            this.tbSdrRxVGain1 = new System.Windows.Forms.TextBox();
-            this.tbRxFolder = new System.Windows.Forms.TextBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.btnRxReceive = new System.Windows.Forms.Button();
+            this.tbRxVGain2 = new System.Windows.Forms.TextBox();
+            this.tbRxVGain1 = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -210,12 +223,19 @@
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
+            this.label75 = new System.Windows.Forms.Label();
+            this.tbRxSdrStatus = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.btnRxReceive = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.errorProviderRx = new System.Windows.Forms.ErrorProvider(this.components);
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.errorProviderAn = new System.Windows.Forms.ErrorProvider(this.components);
-            this.errorProviderDv = new System.Windows.Forms.ErrorProvider(this.components);
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.rxSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.txOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.dvOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.dvSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tabAnalyze.SuspendLayout();
             this.gbAnWordSummary.SuspendLayout();
             this.gbAnStartBits.SuspendLayout();
@@ -226,158 +246,217 @@
             this.tabDevice.SuspendLayout();
             this.gbDvDevice.SuspendLayout();
             this.tabTransmit.SuspendLayout();
-            this.tabRx.SuspendLayout();
+            this.gbTxOptions.SuspendLayout();
+            this.gbTxSignalOptions.SuspendLayout();
+            this.tabReceive.SuspendLayout();
+            this.rbRxOptions.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderRx)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderAn)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderDv)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
-            // tbSdrArguments
+            // tbRxFrequency
             // 
-            this.tbSdrArguments.Enabled = false;
-            this.tbSdrArguments.Location = new System.Drawing.Point(215, 91);
-            this.tbSdrArguments.Name = "tbSdrArguments";
-            this.tbSdrArguments.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrArguments.TabIndex = 1;
-            this.ttSdr.SetToolTip(this.tbSdrArguments, "SDR-specific arguments");
+            this.tbRxFrequency.Enabled = false;
+            this.tbRxFrequency.Location = new System.Drawing.Point(175, 51);
+            this.tbRxFrequency.Name = "tbRxFrequency";
+            this.tbRxFrequency.Size = new System.Drawing.Size(100, 20);
+            this.tbRxFrequency.TabIndex = 2;
+            this.ttSdr.SetToolTip(this.tbRxFrequency, "Set the SDR to the specified frequency");
+            this.tbRxFrequency.Validating += new System.ComponentModel.CancelEventHandler(this.tbFrequency_Validating);
             // 
-            // tbSdrRxFrequency
+            // tbRxSampleRate
             // 
-            this.tbSdrRxFrequency.Enabled = false;
-            this.tbSdrRxFrequency.Location = new System.Drawing.Point(215, 121);
-            this.tbSdrRxFrequency.Name = "tbSdrRxFrequency";
-            this.tbSdrRxFrequency.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxFrequency.TabIndex = 2;
-            this.ttSdr.SetToolTip(this.tbSdrRxFrequency, "Set the SDR to the specified frequency");
-            this.tbSdrRxFrequency.Leave += new System.EventHandler(this.tbSdrFrequency_Leave);
+            this.tbRxSampleRate.Enabled = false;
+            this.tbRxSampleRate.Location = new System.Drawing.Point(175, 81);
+            this.tbRxSampleRate.Name = "tbRxSampleRate";
+            this.tbRxSampleRate.Size = new System.Drawing.Size(100, 20);
+            this.tbRxSampleRate.TabIndex = 3;
+            this.ttSdr.SetToolTip(this.tbRxSampleRate, "Set the SDR to the specified sample rate");
+            this.tbRxSampleRate.Validating += new System.ComponentModel.CancelEventHandler(this.tbSampleRate_Validating);
             // 
-            // tbSdrRxSampleRate
+            // tbRxBandwidth
             // 
-            this.tbSdrRxSampleRate.Enabled = false;
-            this.tbSdrRxSampleRate.Location = new System.Drawing.Point(215, 151);
-            this.tbSdrRxSampleRate.Name = "tbSdrRxSampleRate";
-            this.tbSdrRxSampleRate.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxSampleRate.TabIndex = 3;
-            this.ttSdr.SetToolTip(this.tbSdrRxSampleRate, "Set the SDR to the specified sample rate");
-            this.tbSdrRxSampleRate.Validating += new System.ComponentModel.CancelEventHandler(this.tbSdrRxSampleRate_Validating);
+            this.tbRxBandwidth.Enabled = false;
+            this.tbRxBandwidth.Location = new System.Drawing.Point(175, 111);
+            this.tbRxBandwidth.Name = "tbRxBandwidth";
+            this.tbRxBandwidth.Size = new System.Drawing.Size(100, 20);
+            this.tbRxBandwidth.TabIndex = 4;
+            this.ttSdr.SetToolTip(this.tbRxBandwidth, "Set the SDR to the specified bandwidth");
+            this.tbRxBandwidth.Validating += new System.ComponentModel.CancelEventHandler(this.tbBandwidth_Validating);
             // 
-            // tbSdrRxBandwidth
+            // cbRxLnaGain
             // 
-            this.tbSdrRxBandwidth.Enabled = false;
-            this.tbSdrRxBandwidth.Location = new System.Drawing.Point(215, 181);
-            this.tbSdrRxBandwidth.Name = "tbSdrRxBandwidth";
-            this.tbSdrRxBandwidth.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxBandwidth.TabIndex = 4;
-            this.ttSdr.SetToolTip(this.tbSdrRxBandwidth, "Set the SDR to the specified bandwidth");
-            this.tbSdrRxBandwidth.Validating += new System.ComponentModel.CancelEventHandler(this.tbSdrRxBandwidth_Validating);
+            this.cbRxLnaGain.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbRxLnaGain.Enabled = false;
+            this.cbRxLnaGain.Items.AddRange(new object[] {
+            "Unknown",
+            "0 dB - Bypass",
+            "3 dB - Mid",
+            "6 dB - Max"});
+            this.cbRxLnaGain.Location = new System.Drawing.Point(175, 141);
+            this.cbRxLnaGain.Name = "cbRxLnaGain";
+            this.cbRxLnaGain.Size = new System.Drawing.Size(100, 21);
+            this.cbRxLnaGain.TabIndex = 5;
+            this.ttSdr.SetToolTip(this.cbRxLnaGain, "Set the SDR to the specified gain");
+            this.cbRxLnaGain.Validating += new System.ComponentModel.CancelEventHandler(this.cbRxLnaGain_Validating);
             // 
-            // cbSdrRxLnaGain
+            // tbRxNumBuffers
             // 
-            this.cbSdrRxLnaGain.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbSdrRxLnaGain.Enabled = false;
-            this.cbSdrRxLnaGain.Items.AddRange(new object[] {
-            "0",
-            "3",
-            "6"});
-            this.cbSdrRxLnaGain.Location = new System.Drawing.Point(215, 211);
-            this.cbSdrRxLnaGain.Name = "cbSdrRxLnaGain";
-            this.cbSdrRxLnaGain.Size = new System.Drawing.Size(100, 21);
-            this.cbSdrRxLnaGain.TabIndex = 5;
-            this.ttSdr.SetToolTip(this.cbSdrRxLnaGain, "Set the SDR to the specified gain");
-            this.cbSdrRxLnaGain.Leave += new System.EventHandler(this.cbSdrRxLnaGain_Leave);
+            this.tbRxNumBuffers.Enabled = false;
+            this.tbRxNumBuffers.Location = new System.Drawing.Point(175, 231);
+            this.tbRxNumBuffers.Name = "tbRxNumBuffers";
+            this.tbRxNumBuffers.Size = new System.Drawing.Size(100, 20);
+            this.tbRxNumBuffers.TabIndex = 8;
+            this.ttSdr.SetToolTip(this.tbRxNumBuffers, "Allocate <n> sample buffers");
+            this.tbRxNumBuffers.Validating += new System.ComponentModel.CancelEventHandler(this.tbNumBuffers_Validating);
             // 
-            // tbSdrRxNumBuffers
+            // tbRxBufferSize
             // 
-            this.tbSdrRxNumBuffers.Enabled = false;
-            this.tbSdrRxNumBuffers.Location = new System.Drawing.Point(215, 301);
-            this.tbSdrRxNumBuffers.Name = "tbSdrRxNumBuffers";
-            this.tbSdrRxNumBuffers.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxNumBuffers.TabIndex = 8;
-            this.ttSdr.SetToolTip(this.tbSdrRxNumBuffers, "Allocate <n> sample buffers");
-            this.tbSdrRxNumBuffers.Validating += new System.ComponentModel.CancelEventHandler(this.tbSdrRxNumBuffers_Validating);
+            this.tbRxBufferSize.Enabled = false;
+            this.tbRxBufferSize.Location = new System.Drawing.Point(175, 261);
+            this.tbRxBufferSize.Name = "tbRxBufferSize";
+            this.tbRxBufferSize.Size = new System.Drawing.Size(100, 20);
+            this.tbRxBufferSize.TabIndex = 9;
+            this.ttSdr.SetToolTip(this.tbRxBufferSize, "Allocate <n> samples in each sample buffer");
+            this.tbRxBufferSize.Validating += new System.ComponentModel.CancelEventHandler(this.tbBufferSize_Validating);
             // 
-            // tbSdrRxSamPerBuffer
+            // tbRxNumXfers
             // 
-            this.tbSdrRxSamPerBuffer.Enabled = false;
-            this.tbSdrRxSamPerBuffer.Location = new System.Drawing.Point(215, 331);
-            this.tbSdrRxSamPerBuffer.Name = "tbSdrRxSamPerBuffer";
-            this.tbSdrRxSamPerBuffer.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxSamPerBuffer.TabIndex = 9;
-            this.ttSdr.SetToolTip(this.tbSdrRxSamPerBuffer, "Allocate <n> samples in each sample buffer");
-            this.tbSdrRxSamPerBuffer.Validating += new System.ComponentModel.CancelEventHandler(this.tbSdrRxSamPerBuffer_Validating);
+            this.tbRxNumXfers.Enabled = false;
+            this.tbRxNumXfers.Location = new System.Drawing.Point(175, 291);
+            this.tbRxNumXfers.Name = "tbRxNumXfers";
+            this.tbRxNumXfers.Size = new System.Drawing.Size(100, 20);
+            this.tbRxNumXfers.TabIndex = 10;
+            this.ttSdr.SetToolTip(this.tbRxNumXfers, "Utilize up to <n> simultaneous USB transfers");
+            this.tbRxNumXfers.Validating += new System.ComponentModel.CancelEventHandler(this.tbNumXfers_Validating);
             // 
-            // tbSdrRxNumUsbChannels
+            // tbRxSyncTimeout
             // 
-            this.tbSdrRxNumUsbChannels.Enabled = false;
-            this.tbSdrRxNumUsbChannels.Location = new System.Drawing.Point(215, 361);
-            this.tbSdrRxNumUsbChannels.Name = "tbSdrRxNumUsbChannels";
-            this.tbSdrRxNumUsbChannels.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxNumUsbChannels.TabIndex = 10;
-            this.ttSdr.SetToolTip(this.tbSdrRxNumUsbChannels, "Utilize up to <n> simultaneous USB transfers");
-            this.tbSdrRxNumUsbChannels.Validating += new System.ComponentModel.CancelEventHandler(this.tbSdrRxNumUsbChannels_Validating);
+            this.tbRxSyncTimeout.Enabled = false;
+            this.tbRxSyncTimeout.Location = new System.Drawing.Point(175, 321);
+            this.tbRxSyncTimeout.Name = "tbRxSyncTimeout";
+            this.tbRxSyncTimeout.Size = new System.Drawing.Size(100, 20);
+            this.tbRxSyncTimeout.TabIndex = 12;
+            this.ttSdr.SetToolTip(this.tbRxSyncTimeout, "Set sync function timeout to <n> milliseconds");
+            this.tbRxSyncTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.tbSyncTimeout_Validating);
             // 
-            // tbSdrRxSyncTimeout
+            // cbRxSDR
             // 
-            this.tbSdrRxSyncTimeout.Enabled = false;
-            this.tbSdrRxSyncTimeout.Location = new System.Drawing.Point(215, 391);
-            this.tbSdrRxSyncTimeout.Name = "tbSdrRxSyncTimeout";
-            this.tbSdrRxSyncTimeout.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxSyncTimeout.TabIndex = 12;
-            this.ttSdr.SetToolTip(this.tbSdrRxSyncTimeout, "Set sync function timeout to <n> milliseconds");
-            this.tbSdrRxSyncTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.tbSdrRxSyncTimeout_Validating);
+            this.cbRxSDR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbRxSDR.FormattingEnabled = true;
+            this.cbRxSDR.Items.AddRange(new object[] {
+            "BladeRF",
+            "None"});
+            this.cbRxSDR.Location = new System.Drawing.Point(175, 21);
+            this.cbRxSDR.Name = "cbRxSDR";
+            this.cbRxSDR.Size = new System.Drawing.Size(121, 21);
+            this.cbRxSDR.TabIndex = 0;
+            this.ttSdr.SetToolTip(this.cbRxSDR, "Select SDR to use");
+            this.cbRxSDR.SelectedIndexChanged += new System.EventHandler(this.cbSdr_SelectedIndexChanged);
             // 
-            // cbSdrSDR
+            // tbTxBandwidth
             // 
-            this.cbSdrSDR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbSdrSDR.FormattingEnabled = true;
-            this.cbSdrSDR.Items.AddRange(new object[] {
-            "BladeRF"});
-            this.cbSdrSDR.Location = new System.Drawing.Point(215, 61);
-            this.cbSdrSDR.Name = "cbSdrSDR";
-            this.cbSdrSDR.Size = new System.Drawing.Size(121, 21);
-            this.cbSdrSDR.TabIndex = 0;
-            this.ttSdr.SetToolTip(this.cbSdrSDR, "Select SDR to use");
-            this.cbSdrSDR.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
+            this.tbTxBandwidth.Enabled = false;
+            this.tbTxBandwidth.Location = new System.Drawing.Point(175, 111);
+            this.tbTxBandwidth.Name = "tbTxBandwidth";
+            this.tbTxBandwidth.Size = new System.Drawing.Size(100, 20);
+            this.tbTxBandwidth.TabIndex = 30;
+            this.ttSdr.SetToolTip(this.tbTxBandwidth, "Set the SDR to the specified bandwidth");
+            this.tbTxBandwidth.Validating += new System.ComponentModel.CancelEventHandler(this.tbBandwidth_Validating);
+            // 
+            // tbTxSampleRate
+            // 
+            this.tbTxSampleRate.Enabled = false;
+            this.tbTxSampleRate.Location = new System.Drawing.Point(175, 81);
+            this.tbTxSampleRate.Name = "tbTxSampleRate";
+            this.tbTxSampleRate.Size = new System.Drawing.Size(100, 20);
+            this.tbTxSampleRate.TabIndex = 28;
+            this.ttSdr.SetToolTip(this.tbTxSampleRate, "Set the SDR to the specified sample rate");
+            this.tbTxSampleRate.Validating += new System.ComponentModel.CancelEventHandler(this.tbSampleRate_Validating);
+            // 
+            // tbTxFrequency
+            // 
+            this.tbTxFrequency.Enabled = false;
+            this.tbTxFrequency.Location = new System.Drawing.Point(175, 51);
+            this.tbTxFrequency.Name = "tbTxFrequency";
+            this.tbTxFrequency.Size = new System.Drawing.Size(100, 20);
+            this.tbTxFrequency.TabIndex = 26;
+            this.ttSdr.SetToolTip(this.tbTxFrequency, "Set the SDR to the specified frequency");
+            this.tbTxFrequency.Validating += new System.ComponentModel.CancelEventHandler(this.tbFrequency_Validating);
+            // 
+            // cbTxSDR
+            // 
+            this.cbTxSDR.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTxSDR.FormattingEnabled = true;
+            this.cbTxSDR.Items.AddRange(new object[] {
+            "BladeRF",
+            "None"});
+            this.cbTxSDR.Location = new System.Drawing.Point(175, 21);
+            this.cbTxSDR.Name = "cbTxSDR";
+            this.cbTxSDR.Size = new System.Drawing.Size(121, 21);
+            this.cbTxSDR.TabIndex = 24;
+            this.ttSdr.SetToolTip(this.cbTxSDR, "Select SDR to use");
+            this.cbTxSDR.SelectedIndexChanged += new System.EventHandler(this.cbSdr_SelectedIndexChanged);
+            // 
+            // tbTxSyncTimeout
+            // 
+            this.tbTxSyncTimeout.Enabled = false;
+            this.tbTxSyncTimeout.Location = new System.Drawing.Point(175, 291);
+            this.tbTxSyncTimeout.Name = "tbTxSyncTimeout";
+            this.tbTxSyncTimeout.Size = new System.Drawing.Size(100, 20);
+            this.tbTxSyncTimeout.TabIndex = 58;
+            this.ttSdr.SetToolTip(this.tbTxSyncTimeout, "Set sync function timeout to <n> milliseconds");
+            // 
+            // tbTxNumXfers
+            // 
+            this.tbTxNumXfers.Enabled = false;
+            this.tbTxNumXfers.Location = new System.Drawing.Point(175, 261);
+            this.tbTxNumXfers.Name = "tbTxNumXfers";
+            this.tbTxNumXfers.Size = new System.Drawing.Size(100, 20);
+            this.tbTxNumXfers.TabIndex = 57;
+            this.ttSdr.SetToolTip(this.tbTxNumXfers, "Utilize up to <n> simultaneous USB transfers");
+            // 
+            // tbTxBufferSize
+            // 
+            this.tbTxBufferSize.Enabled = false;
+            this.tbTxBufferSize.Location = new System.Drawing.Point(175, 231);
+            this.tbTxBufferSize.Name = "tbTxBufferSize";
+            this.tbTxBufferSize.Size = new System.Drawing.Size(100, 20);
+            this.tbTxBufferSize.TabIndex = 55;
+            this.ttSdr.SetToolTip(this.tbTxBufferSize, "Allocate <n> samples in each sample buffer");
+            // 
+            // tbTxNumBuffers
+            // 
+            this.tbTxNumBuffers.Enabled = false;
+            this.tbTxNumBuffers.Location = new System.Drawing.Point(175, 201);
+            this.tbTxNumBuffers.Name = "tbTxNumBuffers";
+            this.tbTxNumBuffers.Size = new System.Drawing.Size(100, 20);
+            this.tbTxNumBuffers.TabIndex = 54;
+            this.ttSdr.SetToolTip(this.tbTxNumBuffers, "Allocate <n> sample buffers");
             // 
             // tbTxDelay
             // 
-            this.tbTxDelay.Location = new System.Drawing.Point(181, 64);
+            this.tbTxDelay.Location = new System.Drawing.Point(134, 51);
             this.tbTxDelay.Name = "tbTxDelay";
             this.tbTxDelay.Size = new System.Drawing.Size(100, 20);
             this.tbTxDelay.TabIndex = 1;
-            this.ttTxDelay.SetToolTip(this.tbTxDelay, "Microseconds to deplay before transmissions");
+            this.tbTxDelay.Text = "0";
+            this.ttTxDelay.SetToolTip(this.tbTxDelay, "Microseconds to delay before transmissions");
+            this.tbTxDelay.Validating += new System.ComponentModel.CancelEventHandler(this.tbTxDelay_Validating);
             // 
             // tbTxCount
             // 
-            this.tbTxCount.Location = new System.Drawing.Point(181, 97);
+            this.tbTxCount.Location = new System.Drawing.Point(134, 78);
             this.tbTxCount.Name = "tbTxCount";
             this.tbTxCount.Size = new System.Drawing.Size(100, 20);
             this.tbTxCount.TabIndex = 2;
+            this.tbTxCount.Text = "1";
             this.ttTxCount.SetToolTip(this.tbTxCount, "Number of times to send transmission");
-            // 
-            // tbTxParam
-            // 
-            this.tbTxParam.Location = new System.Drawing.Point(181, 130);
-            this.tbTxParam.Name = "tbTxParam";
-            this.tbTxParam.Size = new System.Drawing.Size(100, 20);
-            this.tbTxParam.TabIndex = 3;
-            this.ttTxParameters.SetToolTip(this.tbTxParam, "Device parameter value to transmit");
-            // 
-            // btnAnSelectFolder
-            // 
-            this.btnAnSelectFolder.Location = new System.Drawing.Point(314, 59);
-            this.btnAnSelectFolder.Name = "btnAnSelectFolder";
-            this.btnAnSelectFolder.Size = new System.Drawing.Size(85, 23);
-            this.btnAnSelectFolder.TabIndex = 20;
-            this.btnAnSelectFolder.Text = "Select Folder";
-            this.ttRxTab.SetToolTip(this.btnAnSelectFolder, "Select JSON filter file to filter signal with.");
-            this.btnAnSelectFolder.UseVisualStyleBackColor = true;
-            this.btnAnSelectFolder.Click += new System.EventHandler(this.btnAnSelectFolder_Click);
+            this.tbTxCount.Validating += new System.ComponentModel.CancelEventHandler(this.tbTxCount_Validating);
             // 
             // btnAnSelectFile
             // 
-            this.btnAnSelectFile.Location = new System.Drawing.Point(314, 88);
+            this.btnAnSelectFile.Location = new System.Drawing.Point(314, 32);
             this.btnAnSelectFile.Name = "btnAnSelectFile";
             this.btnAnSelectFile.Size = new System.Drawing.Size(85, 23);
             this.btnAnSelectFile.TabIndex = 23;
@@ -388,8 +467,9 @@
             // 
             // tbRxFileName
             // 
-            this.tbRxFileName.Location = new System.Drawing.Point(472, 91);
+            this.tbRxFileName.Location = new System.Drawing.Point(472, 61);
             this.tbRxFileName.Name = "tbRxFileName";
+            this.tbRxFileName.ReadOnly = true;
             this.tbRxFileName.Size = new System.Drawing.Size(100, 20);
             this.tbRxFileName.TabIndex = 14;
             this.ttRxTab.SetToolTip(this.tbRxFileName, resources.GetString("tbRxFileName.ToolTip"));
@@ -399,7 +479,7 @@
             this.rbRxInputRaw.AutoSize = true;
             this.rbRxInputRaw.Checked = true;
             this.rbRxInputRaw.Enabled = false;
-            this.rbRxInputRaw.Location = new System.Drawing.Point(472, 152);
+            this.rbRxInputRaw.Location = new System.Drawing.Point(472, 122);
             this.rbRxInputRaw.Name = "rbRxInputRaw";
             this.rbRxInputRaw.Size = new System.Drawing.Size(47, 17);
             this.rbRxInputRaw.TabIndex = 15;
@@ -412,7 +492,7 @@
             // 
             this.rbRxInputFiltered.AutoSize = true;
             this.rbRxInputFiltered.Enabled = false;
-            this.rbRxInputFiltered.Location = new System.Drawing.Point(546, 152);
+            this.rbRxInputFiltered.Location = new System.Drawing.Point(546, 122);
             this.rbRxInputFiltered.Name = "rbRxInputFiltered";
             this.rbRxInputFiltered.Size = new System.Drawing.Size(59, 17);
             this.rbRxInputFiltered.TabIndex = 16;
@@ -427,7 +507,7 @@
             this.cbRxFormat.Items.AddRange(new object[] {
             "Binary",
             "CSV"});
-            this.cbRxFormat.Location = new System.Drawing.Point(472, 121);
+            this.cbRxFormat.Location = new System.Drawing.Point(472, 91);
             this.cbRxFormat.Name = "cbRxFormat";
             this.cbRxFormat.Size = new System.Drawing.Size(121, 21);
             this.cbRxFormat.TabIndex = 18;
@@ -436,7 +516,7 @@
             // 
             // tbRxFilter
             // 
-            this.tbRxFilter.Location = new System.Drawing.Point(472, 181);
+            this.tbRxFilter.Location = new System.Drawing.Point(472, 151);
             this.tbRxFilter.Name = "tbRxFilter";
             this.tbRxFilter.ReadOnly = true;
             this.tbRxFilter.Size = new System.Drawing.Size(121, 20);
@@ -446,7 +526,7 @@
             // btnFilterSelect
             // 
             this.btnFilterSelect.Enabled = false;
-            this.btnFilterSelect.Location = new System.Drawing.Point(626, 179);
+            this.btnFilterSelect.Location = new System.Drawing.Point(626, 149);
             this.btnFilterSelect.Name = "btnFilterSelect";
             this.btnFilterSelect.Size = new System.Drawing.Size(85, 23);
             this.btnFilterSelect.TabIndex = 34;
@@ -454,20 +534,9 @@
             this.ttRxTab.SetToolTip(this.btnFilterSelect, "Select JSON filter file to filter signal with.");
             this.btnFilterSelect.UseVisualStyleBackColor = true;
             // 
-            // btnRxSelectFolder
-            // 
-            this.btnRxSelectFolder.Location = new System.Drawing.Point(626, 59);
-            this.btnRxSelectFolder.Name = "btnRxSelectFolder";
-            this.btnRxSelectFolder.Size = new System.Drawing.Size(85, 23);
-            this.btnRxSelectFolder.TabIndex = 38;
-            this.btnRxSelectFolder.Text = "Select Folder";
-            this.ttRxTab.SetToolTip(this.btnRxSelectFolder, "Select JSON filter file to filter signal with.");
-            this.btnRxSelectFolder.UseVisualStyleBackColor = true;
-            this.btnRxSelectFolder.Click += new System.EventHandler(this.btnRxSelectFolder_Click);
-            // 
             // btnRxSelectFile
             // 
-            this.btnRxSelectFile.Location = new System.Drawing.Point(626, 89);
+            this.btnRxSelectFile.Location = new System.Drawing.Point(626, 59);
             this.btnRxSelectFile.Name = "btnRxSelectFile";
             this.btnRxSelectFile.Size = new System.Drawing.Size(85, 23);
             this.btnRxSelectFile.TabIndex = 41;
@@ -478,7 +547,7 @@
             // 
             // tbAnSignalFile
             // 
-            this.tbAnSignalFile.Location = new System.Drawing.Point(168, 91);
+            this.tbAnSignalFile.Location = new System.Drawing.Point(168, 35);
             this.tbAnSignalFile.Name = "tbAnSignalFile";
             this.tbAnSignalFile.ReadOnly = true;
             this.tbAnSignalFile.Size = new System.Drawing.Size(100, 20);
@@ -487,7 +556,7 @@
             // 
             // tbAnClip
             // 
-            this.tbAnClip.Location = new System.Drawing.Point(169, 289);
+            this.tbAnClip.Location = new System.Drawing.Point(169, 233);
             this.tbAnClip.Name = "tbAnClip";
             this.tbAnClip.Size = new System.Drawing.Size(100, 20);
             this.tbAnClip.TabIndex = 3;
@@ -495,7 +564,7 @@
             // 
             // tbAnFloor
             // 
-            this.tbAnFloor.Location = new System.Drawing.Point(169, 319);
+            this.tbAnFloor.Location = new System.Drawing.Point(169, 263);
             this.tbAnFloor.Name = "tbAnFloor";
             this.tbAnFloor.Size = new System.Drawing.Size(100, 20);
             this.tbAnFloor.TabIndex = 4;
@@ -503,7 +572,7 @@
             // 
             // tbAnFirstSample
             // 
-            this.tbAnFirstSample.Location = new System.Drawing.Point(169, 349);
+            this.tbAnFirstSample.Location = new System.Drawing.Point(169, 293);
             this.tbAnFirstSample.Name = "tbAnFirstSample";
             this.tbAnFirstSample.Size = new System.Drawing.Size(100, 20);
             this.tbAnFirstSample.TabIndex = 5;
@@ -511,7 +580,7 @@
             // 
             // tbAnLastSample
             // 
-            this.tbAnLastSample.Location = new System.Drawing.Point(169, 379);
+            this.tbAnLastSample.Location = new System.Drawing.Point(169, 323);
             this.tbAnLastSample.Name = "tbAnLastSample";
             this.tbAnLastSample.Size = new System.Drawing.Size(100, 20);
             this.tbAnLastSample.TabIndex = 6;
@@ -616,11 +685,8 @@
             this.tabAnalyze.Controls.Add(this.tbAnFirstSample);
             this.tabAnalyze.Controls.Add(this.tbAnFloor);
             this.tabAnalyze.Controls.Add(this.tbAnClip);
-            this.tabAnalyze.Controls.Add(this.tbAnFolder);
             this.tabAnalyze.Controls.Add(this.tbAnSignalFile);
             this.tabAnalyze.Controls.Add(this.btnAnSelectFile);
-            this.tabAnalyze.Controls.Add(this.label31);
-            this.tabAnalyze.Controls.Add(this.btnAnSelectFolder);
             this.tabAnalyze.Controls.Add(this.label29);
             this.tabAnalyze.Controls.Add(this.label28);
             this.tabAnalyze.Controls.Add(this.label27);
@@ -666,6 +732,7 @@
             // 
             // btnAnMakeDevice
             // 
+            this.btnAnMakeDevice.Enabled = false;
             this.btnAnMakeDevice.Location = new System.Drawing.Point(373, 203);
             this.btnAnMakeDevice.Name = "btnAnMakeDevice";
             this.btnAnMakeDevice.Size = new System.Drawing.Size(105, 23);
@@ -1209,7 +1276,7 @@
             // btnAnAnalyze
             // 
             this.btnAnAnalyze.Enabled = false;
-            this.btnAnAnalyze.Location = new System.Drawing.Point(189, 416);
+            this.btnAnAnalyze.Location = new System.Drawing.Point(189, 360);
             this.btnAnAnalyze.Name = "btnAnAnalyze";
             this.btnAnAnalyze.Size = new System.Drawing.Size(88, 23);
             this.btnAnAnalyze.TabIndex = 19;
@@ -1227,7 +1294,7 @@
             this.gbAnFilter.Controls.Add(this.tbAnSampleRate);
             this.gbAnFilter.Controls.Add(this.tbAnLowPass);
             this.gbAnFilter.Controls.Add(this.tbAnStop);
-            this.gbAnFilter.Location = new System.Drawing.Point(40, 120);
+            this.gbAnFilter.Location = new System.Drawing.Point(40, 64);
             this.gbAnFilter.Name = "gbAnFilter";
             this.gbAnFilter.Size = new System.Drawing.Size(237, 143);
             this.gbAnFilter.TabIndex = 2;
@@ -1272,7 +1339,7 @@
             // 
             // btnAnFilter
             // 
-            this.btnAnFilter.Location = new System.Drawing.Point(67, 416);
+            this.btnAnFilter.Location = new System.Drawing.Point(67, 360);
             this.btnAnFilter.Name = "btnAnFilter";
             this.btnAnFilter.Size = new System.Drawing.Size(113, 23);
             this.btnAnFilter.TabIndex = 18;
@@ -1280,26 +1347,10 @@
             this.btnAnFilter.UseVisualStyleBackColor = true;
             this.btnAnFilter.Click += new System.EventHandler(this.btnAnFilter_Click);
             // 
-            // tbAnFolder
-            // 
-            this.tbAnFolder.Location = new System.Drawing.Point(169, 61);
-            this.tbAnFolder.Name = "tbAnFolder";
-            this.tbAnFolder.Size = new System.Drawing.Size(100, 20);
-            this.tbAnFolder.TabIndex = 0;
-            // 
-            // label31
-            // 
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(64, 64);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(36, 13);
-            this.label31.TabIndex = 21;
-            this.label31.Text = "Folder";
-            // 
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(64, 382);
+            this.label29.Location = new System.Drawing.Point(64, 326);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(65, 13);
             this.label29.TabIndex = 8;
@@ -1308,7 +1359,7 @@
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(64, 352);
+            this.label28.Location = new System.Drawing.Point(64, 296);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(64, 13);
             this.label28.TabIndex = 7;
@@ -1317,7 +1368,7 @@
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(64, 322);
+            this.label27.Location = new System.Drawing.Point(64, 266);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(79, 13);
             this.label27.TabIndex = 6;
@@ -1326,7 +1377,7 @@
             // label26
             // 
             this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(64, 292);
+            this.label26.Location = new System.Drawing.Point(64, 236);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(73, 13);
             this.label26.TabIndex = 5;
@@ -1335,7 +1386,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(64, 94);
+            this.label20.Location = new System.Drawing.Point(64, 38);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(55, 13);
             this.label20.TabIndex = 0;
@@ -1381,7 +1432,6 @@
             // 
             this.gbDvDevice.Controls.Add(this.btnDvOpenDevice);
             this.gbDvDevice.Controls.Add(this.btnDvNewDevice);
-            this.gbDvDevice.Controls.Add(this.btnDvSaveAsDevice);
             this.gbDvDevice.Controls.Add(this.btnDvSaveDevice);
             this.gbDvDevice.Controls.Add(this.tbDvWordPad);
             this.gbDvDevice.Controls.Add(this.cbDvSyncEdge);
@@ -1403,7 +1453,7 @@
             this.gbDvDevice.Controls.Add(this.tbDvDeviceName);
             this.gbDvDevice.Location = new System.Drawing.Point(38, 36);
             this.gbDvDevice.Name = "gbDvDevice";
-            this.gbDvDevice.Size = new System.Drawing.Size(285, 360);
+            this.gbDvDevice.Size = new System.Drawing.Size(285, 333);
             this.gbDvDevice.TabIndex = 29;
             this.gbDvDevice.TabStop = false;
             this.gbDvDevice.Text = "OOK Device Settings";
@@ -1428,20 +1478,10 @@
             this.btnDvNewDevice.UseVisualStyleBackColor = true;
             this.btnDvNewDevice.Click += new System.EventHandler(this.btnDvNewDevice_Click);
             // 
-            // btnDvSaveAsDevice
-            // 
-            this.btnDvSaveAsDevice.Enabled = false;
-            this.btnDvSaveAsDevice.Location = new System.Drawing.Point(94, 323);
-            this.btnDvSaveAsDevice.Name = "btnDvSaveAsDevice";
-            this.btnDvSaveAsDevice.Size = new System.Drawing.Size(55, 23);
-            this.btnDvSaveAsDevice.TabIndex = 26;
-            this.btnDvSaveAsDevice.Text = "Save As";
-            this.btnDvSaveAsDevice.UseVisualStyleBackColor = true;
-            // 
             // btnDvSaveDevice
             // 
             this.btnDvSaveDevice.Enabled = false;
-            this.btnDvSaveDevice.Location = new System.Drawing.Point(29, 323);
+            this.btnDvSaveDevice.Location = new System.Drawing.Point(159, 294);
             this.btnDvSaveDevice.Name = "btnDvSaveDevice";
             this.btnDvSaveDevice.Size = new System.Drawing.Size(55, 23);
             this.btnDvSaveDevice.TabIndex = 18;
@@ -1670,13 +1710,10 @@
             // 
             // tabTransmit
             // 
-            this.tabTransmit.Controls.Add(this.tbTxParam);
-            this.tabTransmit.Controls.Add(this.tbTxCount);
-            this.tabTransmit.Controls.Add(this.tbTxDelay);
-            this.tabTransmit.Controls.Add(this.label4);
-            this.tabTransmit.Controls.Add(this.label3);
-            this.tabTransmit.Controls.Add(this.label2);
-            this.tabTransmit.Controls.Add(this.btnTransmit);
+            this.tabTransmit.Controls.Add(this.label76);
+            this.tabTransmit.Controls.Add(this.tbTxSdrStatus);
+            this.tabTransmit.Controls.Add(this.gbTxOptions);
+            this.tabTransmit.Controls.Add(this.gbTxSignalOptions);
             this.tabTransmit.Location = new System.Drawing.Point(4, 22);
             this.tabTransmit.Name = "tabTransmit";
             this.tabTransmit.Padding = new System.Windows.Forms.Padding(3);
@@ -1684,20 +1721,221 @@
             this.tabTransmit.TabIndex = 1;
             this.tabTransmit.Text = "Transmit";
             this.tabTransmit.UseVisualStyleBackColor = true;
+            this.tabTransmit.Enter += new System.EventHandler(this.tabRxTx_Enter);
+            // 
+            // label76
+            // 
+            this.label76.AutoSize = true;
+            this.label76.Location = new System.Drawing.Point(384, 214);
+            this.label76.Name = "label76";
+            this.label76.Size = new System.Drawing.Size(63, 13);
+            this.label76.TabIndex = 62;
+            this.label76.Text = "SDR Status";
+            // 
+            // tbTxSdrStatus
+            // 
+            this.tbTxSdrStatus.Location = new System.Drawing.Point(384, 244);
+            this.tbTxSdrStatus.Multiline = true;
+            this.tbTxSdrStatus.Name = "tbTxSdrStatus";
+            this.tbTxSdrStatus.ReadOnly = true;
+            this.tbTxSdrStatus.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbTxSdrStatus.Size = new System.Drawing.Size(519, 170);
+            this.tbTxSdrStatus.TabIndex = 61;
+            // 
+            // gbTxOptions
+            // 
+            this.gbTxOptions.Controls.Add(this.tbTxSyncTimeout);
+            this.gbTxOptions.Controls.Add(this.tbTxNumXfers);
+            this.gbTxOptions.Controls.Add(this.tbTxBufferSize);
+            this.gbTxOptions.Controls.Add(this.tbTxNumBuffers);
+            this.gbTxOptions.Controls.Add(this.label71);
+            this.gbTxOptions.Controls.Add(this.label72);
+            this.gbTxOptions.Controls.Add(this.label73);
+            this.gbTxOptions.Controls.Add(this.label74);
+            this.gbTxOptions.Controls.Add(this.label69);
+            this.gbTxOptions.Controls.Add(this.label70);
+            this.gbTxOptions.Controls.Add(this.tbTxVGain2);
+            this.gbTxOptions.Controls.Add(this.tbTxVGain1);
+            this.gbTxOptions.Controls.Add(this.tbTxBandwidth);
+            this.gbTxOptions.Controls.Add(this.tbTxSampleRate);
+            this.gbTxOptions.Controls.Add(this.tbTxFrequency);
+            this.gbTxOptions.Controls.Add(this.cbTxSDR);
+            this.gbTxOptions.Controls.Add(this.label10);
+            this.gbTxOptions.Controls.Add(this.label30);
+            this.gbTxOptions.Controls.Add(this.label31);
+            this.gbTxOptions.Controls.Add(this.label68);
+            this.gbTxOptions.Location = new System.Drawing.Point(40, 40);
+            this.gbTxOptions.Name = "gbTxOptions";
+            this.gbTxOptions.Size = new System.Drawing.Size(302, 335);
+            this.gbTxOptions.TabIndex = 60;
+            this.gbTxOptions.TabStop = false;
+            this.gbTxOptions.Text = "Transmitter Options";
+            // 
+            // label71
+            // 
+            this.label71.AutoSize = true;
+            this.label71.Location = new System.Drawing.Point(24, 294);
+            this.label71.Name = "label71";
+            this.label71.Size = new System.Drawing.Size(88, 13);
+            this.label71.TabIndex = 56;
+            this.label71.Text = "Sync Timout (ms)";
+            // 
+            // label72
+            // 
+            this.label72.AutoSize = true;
+            this.label72.Location = new System.Drawing.Point(24, 264);
+            this.label72.Name = "label72";
+            this.label72.Size = new System.Drawing.Size(103, 13);
+            this.label72.TabIndex = 53;
+            this.label72.Text = "Number of Transfers";
+            // 
+            // label73
+            // 
+            this.label73.AutoSize = true;
+            this.label73.Location = new System.Drawing.Point(24, 234);
+            this.label73.Name = "label73";
+            this.label73.Size = new System.Drawing.Size(58, 13);
+            this.label73.TabIndex = 52;
+            this.label73.Text = "Buffer Size";
+            // 
+            // label74
+            // 
+            this.label74.AutoSize = true;
+            this.label74.Location = new System.Drawing.Point(24, 204);
+            this.label74.Name = "label74";
+            this.label74.Size = new System.Drawing.Size(92, 13);
+            this.label74.TabIndex = 51;
+            this.label74.Text = "Number of Buffers";
+            // 
+            // label69
+            // 
+            this.label69.AutoSize = true;
+            this.label69.Location = new System.Drawing.Point(24, 174);
+            this.label69.Name = "label69";
+            this.label69.Size = new System.Drawing.Size(57, 13);
+            this.label69.TabIndex = 50;
+            this.label69.Text = "Tx VGain2";
+            // 
+            // label70
+            // 
+            this.label70.AutoSize = true;
+            this.label70.Location = new System.Drawing.Point(24, 144);
+            this.label70.Name = "label70";
+            this.label70.Size = new System.Drawing.Size(57, 13);
+            this.label70.TabIndex = 49;
+            this.label70.Text = "Tx VGain1";
+            // 
+            // tbTxVGain2
+            // 
+            this.tbTxVGain2.Enabled = false;
+            this.tbTxVGain2.Location = new System.Drawing.Point(175, 171);
+            this.tbTxVGain2.Name = "tbTxVGain2";
+            this.tbTxVGain2.Size = new System.Drawing.Size(100, 20);
+            this.tbTxVGain2.TabIndex = 48;
+            // 
+            // tbTxVGain1
+            // 
+            this.tbTxVGain1.Enabled = false;
+            this.tbTxVGain1.Location = new System.Drawing.Point(175, 141);
+            this.tbTxVGain1.Name = "tbTxVGain1";
+            this.tbTxVGain1.Size = new System.Drawing.Size(100, 20);
+            this.tbTxVGain1.TabIndex = 47;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(24, 24);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(30, 13);
+            this.label10.TabIndex = 31;
+            this.label10.Text = "SDR";
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(24, 114);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(57, 13);
+            this.label30.TabIndex = 29;
+            this.label30.Text = "Bandwidth";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(24, 84);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(68, 13);
+            this.label31.TabIndex = 27;
+            this.label31.Text = "Sample Rate";
+            // 
+            // label68
+            // 
+            this.label68.AutoSize = true;
+            this.label68.Location = new System.Drawing.Point(24, 54);
+            this.label68.Name = "label68";
+            this.label68.Size = new System.Drawing.Size(57, 13);
+            this.label68.TabIndex = 25;
+            this.label68.Text = "Frequency";
+            // 
+            // gbTxSignalOptions
+            // 
+            this.gbTxSignalOptions.Controls.Add(this.btnTxViewSignal);
+            this.gbTxSignalOptions.Controls.Add(this.btnTxOpenFile);
+            this.gbTxSignalOptions.Controls.Add(this.tbTxFileName);
+            this.gbTxSignalOptions.Controls.Add(this.label4);
+            this.gbTxSignalOptions.Controls.Add(this.tbTxCount);
+            this.gbTxSignalOptions.Controls.Add(this.tbTxDelay);
+            this.gbTxSignalOptions.Controls.Add(this.label3);
+            this.gbTxSignalOptions.Controls.Add(this.label2);
+            this.gbTxSignalOptions.Controls.Add(this.btnTxTransmit);
+            this.gbTxSignalOptions.Location = new System.Drawing.Point(387, 40);
+            this.gbTxSignalOptions.Name = "gbTxSignalOptions";
+            this.gbTxSignalOptions.Size = new System.Drawing.Size(386, 154);
+            this.gbTxSignalOptions.TabIndex = 59;
+            this.gbTxSignalOptions.TabStop = false;
+            this.gbTxSignalOptions.Text = "Transmit Signal Options";
+            // 
+            // btnTxViewSignal
+            // 
+            this.btnTxViewSignal.Enabled = false;
+            this.btnTxViewSignal.Location = new System.Drawing.Point(134, 109);
+            this.btnTxViewSignal.Name = "btnTxViewSignal";
+            this.btnTxViewSignal.Size = new System.Drawing.Size(75, 23);
+            this.btnTxViewSignal.TabIndex = 8;
+            this.btnTxViewSignal.Text = "View Signal";
+            this.btnTxViewSignal.UseVisualStyleBackColor = true;
+            this.btnTxViewSignal.Click += new System.EventHandler(this.btnTxViewSignal_Click);
+            // 
+            // btnTxOpenFile
+            // 
+            this.btnTxOpenFile.Location = new System.Drawing.Point(294, 16);
+            this.btnTxOpenFile.Name = "btnTxOpenFile";
+            this.btnTxOpenFile.Size = new System.Drawing.Size(75, 23);
+            this.btnTxOpenFile.TabIndex = 7;
+            this.btnTxOpenFile.Text = "Open File";
+            this.btnTxOpenFile.UseVisualStyleBackColor = true;
+            this.btnTxOpenFile.Click += new System.EventHandler(this.btnTxOpenFile_Click);
+            // 
+            // tbTxFileName
+            // 
+            this.tbTxFileName.Location = new System.Drawing.Point(134, 18);
+            this.tbTxFileName.Name = "tbTxFileName";
+            this.tbTxFileName.Size = new System.Drawing.Size(100, 20);
+            this.tbTxFileName.TabIndex = 6;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(64, 130);
+            this.label4.Location = new System.Drawing.Point(24, 24);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 13);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Parameters";
+            this.label4.Size = new System.Drawing.Size(55, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Signal File";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(64, 97);
+            this.label3.Location = new System.Drawing.Point(24, 81);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(35, 13);
             this.label3.TabIndex = 0;
@@ -1706,86 +1944,95 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(64, 64);
+            this.label2.Location = new System.Drawing.Point(24, 51);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Delay";
             // 
-            // btnTransmit
+            // btnTxTransmit
             // 
-            this.btnTransmit.Location = new System.Drawing.Point(64, 170);
-            this.btnTransmit.Name = "btnTransmit";
-            this.btnTransmit.Size = new System.Drawing.Size(75, 23);
-            this.btnTransmit.TabIndex = 4;
-            this.btnTransmit.Text = "Transmit";
-            this.btnTransmit.UseVisualStyleBackColor = true;
+            this.btnTxTransmit.Enabled = false;
+            this.btnTxTransmit.Location = new System.Drawing.Point(27, 109);
+            this.btnTxTransmit.Name = "btnTxTransmit";
+            this.btnTxTransmit.Size = new System.Drawing.Size(75, 23);
+            this.btnTxTransmit.TabIndex = 4;
+            this.btnTxTransmit.Text = "Transmit";
+            this.btnTxTransmit.UseVisualStyleBackColor = true;
+            this.btnTxTransmit.Click += new System.EventHandler(this.btnTxTransmit_Click);
             // 
-            // tabRx
+            // tabReceive
             // 
-            this.tabRx.Controls.Add(this.tbSdrRxRecordTime);
-            this.tabRx.Controls.Add(this.label5);
-            this.tabRx.Controls.Add(this.label54);
-            this.tabRx.Controls.Add(this.label53);
-            this.tabRx.Controls.Add(this.tbSdrRxVGain2);
-            this.tabRx.Controls.Add(this.tbSdrRxVGain1);
-            this.tabRx.Controls.Add(this.btnRxSelectFile);
-            this.tabRx.Controls.Add(this.tbRxFolder);
-            this.tabRx.Controls.Add(this.tbRxFilter);
-            this.tabRx.Controls.Add(this.tbRxFileName);
-            this.tabRx.Controls.Add(this.tbSdrRxSyncTimeout);
-            this.tabRx.Controls.Add(this.tbSdrRxNumUsbChannels);
-            this.tabRx.Controls.Add(this.tbSdrRxSamPerBuffer);
-            this.tabRx.Controls.Add(this.tbSdrRxNumBuffers);
-            this.tabRx.Controls.Add(this.cbSdrRxLnaGain);
-            this.tabRx.Controls.Add(this.tbSdrRxBandwidth);
-            this.tabRx.Controls.Add(this.tbSdrRxSampleRate);
-            this.tabRx.Controls.Add(this.tbSdrRxFrequency);
-            this.tabRx.Controls.Add(this.tbSdrArguments);
-            this.tabRx.Controls.Add(this.label30);
-            this.tabRx.Controls.Add(this.btnRxSelectFolder);
-            this.tabRx.Controls.Add(this.btnFilterSelect);
-            this.tabRx.Controls.Add(this.cbRxFormat);
-            this.tabRx.Controls.Add(this.rbRxInputFiltered);
-            this.tabRx.Controls.Add(this.rbRxInputRaw);
-            this.tabRx.Controls.Add(this.label9);
-            this.tabRx.Controls.Add(this.label8);
-            this.tabRx.Controls.Add(this.label7);
-            this.tabRx.Controls.Add(this.label6);
-            this.tabRx.Controls.Add(this.btnRxReceive);
-            this.tabRx.Controls.Add(this.cbSdrSDR);
-            this.tabRx.Controls.Add(this.label22);
-            this.tabRx.Controls.Add(this.label19);
-            this.tabRx.Controls.Add(this.label17);
-            this.tabRx.Controls.Add(this.label16);
-            this.tabRx.Controls.Add(this.label15);
-            this.tabRx.Controls.Add(this.label14);
-            this.tabRx.Controls.Add(this.label13);
-            this.tabRx.Controls.Add(this.label12);
-            this.tabRx.Controls.Add(this.label11);
-            this.tabRx.Controls.Add(this.label10);
-            this.tabRx.Location = new System.Drawing.Point(4, 22);
-            this.tabRx.Name = "tabRx";
-            this.tabRx.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRx.Size = new System.Drawing.Size(970, 469);
-            this.tabRx.TabIndex = 3;
-            this.tabRx.Text = "Receive";
-            this.tabRx.UseVisualStyleBackColor = true;
-            this.tabRx.Enter += new System.EventHandler(this.tabRx_Enter);
+            this.tabReceive.Controls.Add(this.rbRxOptions);
+            this.tabReceive.Controls.Add(this.label75);
+            this.tabReceive.Controls.Add(this.tbRxSdrStatus);
+            this.tabReceive.Controls.Add(this.btnRxSelectFile);
+            this.tabReceive.Controls.Add(this.tbRxFilter);
+            this.tabReceive.Controls.Add(this.tbRxFileName);
+            this.tabReceive.Controls.Add(this.btnFilterSelect);
+            this.tabReceive.Controls.Add(this.cbRxFormat);
+            this.tabReceive.Controls.Add(this.rbRxInputFiltered);
+            this.tabReceive.Controls.Add(this.rbRxInputRaw);
+            this.tabReceive.Controls.Add(this.label9);
+            this.tabReceive.Controls.Add(this.label8);
+            this.tabReceive.Controls.Add(this.label7);
+            this.tabReceive.Controls.Add(this.label6);
+            this.tabReceive.Controls.Add(this.btnRxReceive);
+            this.tabReceive.Location = new System.Drawing.Point(4, 22);
+            this.tabReceive.Name = "tabReceive";
+            this.tabReceive.Padding = new System.Windows.Forms.Padding(3);
+            this.tabReceive.Size = new System.Drawing.Size(970, 469);
+            this.tabReceive.TabIndex = 3;
+            this.tabReceive.Text = "Receive";
+            this.tabReceive.UseVisualStyleBackColor = true;
+            this.tabReceive.Enter += new System.EventHandler(this.tabRxTx_Enter);
             // 
-            // tbSdrRxRecordTime
+            // rbRxOptions
             // 
-            this.tbSdrRxRecordTime.Location = new System.Drawing.Point(215, 421);
-            this.tbSdrRxRecordTime.Name = "tbSdrRxRecordTime";
-            this.tbSdrRxRecordTime.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxRecordTime.TabIndex = 48;
-            this.tbSdrRxRecordTime.Text = "5";
-            this.tbSdrRxRecordTime.Validating += new System.ComponentModel.CancelEventHandler(this.tbSdrRxRecordTime_Validating);
+            this.rbRxOptions.Controls.Add(this.tbRxRecordTime);
+            this.rbRxOptions.Controls.Add(this.label5);
+            this.rbRxOptions.Controls.Add(this.label54);
+            this.rbRxOptions.Controls.Add(this.label53);
+            this.rbRxOptions.Controls.Add(this.tbRxVGain2);
+            this.rbRxOptions.Controls.Add(this.tbRxVGain1);
+            this.rbRxOptions.Controls.Add(this.tbRxSyncTimeout);
+            this.rbRxOptions.Controls.Add(this.tbRxNumXfers);
+            this.rbRxOptions.Controls.Add(this.tbRxBufferSize);
+            this.rbRxOptions.Controls.Add(this.tbRxNumBuffers);
+            this.rbRxOptions.Controls.Add(this.cbRxLnaGain);
+            this.rbRxOptions.Controls.Add(this.tbRxBandwidth);
+            this.rbRxOptions.Controls.Add(this.tbRxSampleRate);
+            this.rbRxOptions.Controls.Add(this.tbRxFrequency);
+            this.rbRxOptions.Controls.Add(this.cbRxSDR);
+            this.rbRxOptions.Controls.Add(this.label22);
+            this.rbRxOptions.Controls.Add(this.label19);
+            this.rbRxOptions.Controls.Add(this.label17);
+            this.rbRxOptions.Controls.Add(this.label16);
+            this.rbRxOptions.Controls.Add(this.label15);
+            this.rbRxOptions.Controls.Add(this.label14);
+            this.rbRxOptions.Controls.Add(this.label13);
+            this.rbRxOptions.Controls.Add(this.label12);
+            this.rbRxOptions.Controls.Add(this.label11);
+            this.rbRxOptions.Location = new System.Drawing.Point(40, 40);
+            this.rbRxOptions.Name = "rbRxOptions";
+            this.rbRxOptions.Size = new System.Drawing.Size(308, 395);
+            this.rbRxOptions.TabIndex = 51;
+            this.rbRxOptions.TabStop = false;
+            this.rbRxOptions.Text = "Receiver Options";
+            // 
+            // tbRxRecordTime
+            // 
+            this.tbRxRecordTime.Location = new System.Drawing.Point(175, 351);
+            this.tbRxRecordTime.Name = "tbRxRecordTime";
+            this.tbRxRecordTime.Size = new System.Drawing.Size(100, 20);
+            this.tbRxRecordTime.TabIndex = 48;
+            this.tbRxRecordTime.Text = "5";
+            this.tbRxRecordTime.Validating += new System.ComponentModel.CancelEventHandler(this.tbRxRecordTime_Validating);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(67, 424);
+            this.label5.Location = new System.Drawing.Point(27, 354);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(127, 13);
             this.label5.TabIndex = 47;
@@ -1794,7 +2041,7 @@
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(67, 274);
+            this.label54.Location = new System.Drawing.Point(27, 204);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(58, 13);
             this.label54.TabIndex = 46;
@@ -1803,96 +2050,34 @@
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(67, 244);
+            this.label53.Location = new System.Drawing.Point(27, 174);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(58, 13);
             this.label53.TabIndex = 45;
             this.label53.Text = "Rx VGain1";
             // 
-            // tbSdrRxVGain2
+            // tbRxVGain2
             // 
-            this.tbSdrRxVGain2.Enabled = false;
-            this.tbSdrRxVGain2.Location = new System.Drawing.Point(215, 271);
-            this.tbSdrRxVGain2.Name = "tbSdrRxVGain2";
-            this.tbSdrRxVGain2.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxVGain2.TabIndex = 7;
-            this.tbSdrRxVGain2.Leave += new System.EventHandler(this.tbSdrRxVGain2_Leave);
+            this.tbRxVGain2.Enabled = false;
+            this.tbRxVGain2.Location = new System.Drawing.Point(175, 201);
+            this.tbRxVGain2.Name = "tbRxVGain2";
+            this.tbRxVGain2.Size = new System.Drawing.Size(100, 20);
+            this.tbRxVGain2.TabIndex = 7;
+            this.tbRxVGain2.Validating += new System.ComponentModel.CancelEventHandler(this.tbRxVGain2_Validating);
             // 
-            // tbSdrRxVGain1
+            // tbRxVGain1
             // 
-            this.tbSdrRxVGain1.Enabled = false;
-            this.tbSdrRxVGain1.Location = new System.Drawing.Point(215, 241);
-            this.tbSdrRxVGain1.Name = "tbSdrRxVGain1";
-            this.tbSdrRxVGain1.Size = new System.Drawing.Size(100, 20);
-            this.tbSdrRxVGain1.TabIndex = 6;
-            this.tbSdrRxVGain1.Leave += new System.EventHandler(this.tbSdrRxVGain1_Leave);
-            // 
-            // tbRxFolder
-            // 
-            this.tbRxFolder.Location = new System.Drawing.Point(472, 61);
-            this.tbRxFolder.Name = "tbRxFolder";
-            this.tbRxFolder.Size = new System.Drawing.Size(100, 20);
-            this.tbRxFolder.TabIndex = 13;
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(405, 64);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(36, 13);
-            this.label30.TabIndex = 39;
-            this.label30.Text = "Folder";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(405, 124);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(39, 13);
-            this.label9.TabIndex = 31;
-            this.label9.Text = "Format";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(405, 184);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(29, 13);
-            this.label8.TabIndex = 30;
-            this.label8.Text = "Filter";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(405, 154);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(31, 13);
-            this.label7.TabIndex = 29;
-            this.label7.Text = "Input";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(405, 94);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(54, 13);
-            this.label6.TabIndex = 28;
-            this.label6.Text = "File Name";
-            // 
-            // btnRxReceive
-            // 
-            this.btnRxReceive.Location = new System.Drawing.Point(405, 209);
-            this.btnRxReceive.Name = "btnRxReceive";
-            this.btnRxReceive.Size = new System.Drawing.Size(75, 23);
-            this.btnRxReceive.TabIndex = 25;
-            this.btnRxReceive.Text = "Receive";
-            this.btnRxReceive.UseVisualStyleBackColor = true;
-            this.btnRxReceive.Click += new System.EventHandler(this.btnReceive_Click);
+            this.tbRxVGain1.Enabled = false;
+            this.tbRxVGain1.Location = new System.Drawing.Point(175, 171);
+            this.tbRxVGain1.Name = "tbRxVGain1";
+            this.tbRxVGain1.Size = new System.Drawing.Size(100, 20);
+            this.tbRxVGain1.TabIndex = 6;
+            this.tbRxVGain1.Validating += new System.ComponentModel.CancelEventHandler(this.tbRxVGain1_Validating);
             // 
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(64, 64);
+            this.label22.Location = new System.Drawing.Point(24, 24);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(30, 13);
             this.label22.TabIndex = 23;
@@ -1901,7 +2086,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(64, 394);
+            this.label19.Location = new System.Drawing.Point(24, 324);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(88, 13);
             this.label19.TabIndex = 9;
@@ -1910,25 +2095,25 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(64, 364);
+            this.label17.Location = new System.Drawing.Point(24, 294);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(128, 13);
+            this.label17.Size = new System.Drawing.Size(103, 13);
             this.label17.TabIndex = 7;
-            this.label17.Text = "Number of USB Channels";
+            this.label17.Text = "Number of Transfers";
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(64, 334);
+            this.label16.Location = new System.Drawing.Point(24, 264);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(96, 13);
+            this.label16.Size = new System.Drawing.Size(58, 13);
             this.label16.TabIndex = 6;
-            this.label16.Text = "Samples per Buffer";
+            this.label16.Text = "Buffer Size";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(64, 304);
+            this.label15.Location = new System.Drawing.Point(24, 234);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(92, 13);
             this.label15.TabIndex = 5;
@@ -1937,7 +2122,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(64, 214);
+            this.label14.Location = new System.Drawing.Point(24, 144);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(53, 13);
             this.label14.TabIndex = 4;
@@ -1946,7 +2131,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(64, 184);
+            this.label13.Location = new System.Drawing.Point(24, 114);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(57, 13);
             this.label13.TabIndex = 3;
@@ -1955,53 +2140,109 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(64, 154);
+            this.label12.Location = new System.Drawing.Point(24, 84);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(60, 13);
+            this.label12.Size = new System.Drawing.Size(68, 13);
             this.label12.TabIndex = 2;
-            this.label12.Text = "Samplerate";
+            this.label12.Text = "Sample Rate";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(64, 124);
+            this.label11.Location = new System.Drawing.Point(24, 54);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(57, 13);
             this.label11.TabIndex = 1;
             this.label11.Text = "Frequency";
             // 
-            // label10
+            // label75
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(64, 94);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(57, 13);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "Arguments";
+            this.label75.AutoSize = true;
+            this.label75.Location = new System.Drawing.Point(405, 244);
+            this.label75.Name = "label75";
+            this.label75.Size = new System.Drawing.Size(63, 13);
+            this.label75.TabIndex = 50;
+            this.label75.Text = "SDR Status";
+            // 
+            // tbRxSdrStatus
+            // 
+            this.tbRxSdrStatus.Location = new System.Drawing.Point(405, 274);
+            this.tbRxSdrStatus.Multiline = true;
+            this.tbRxSdrStatus.Name = "tbRxSdrStatus";
+            this.tbRxSdrStatus.ReadOnly = true;
+            this.tbRxSdrStatus.Size = new System.Drawing.Size(519, 170);
+            this.tbRxSdrStatus.TabIndex = 49;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(405, 94);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(39, 13);
+            this.label9.TabIndex = 31;
+            this.label9.Text = "Format";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(405, 154);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(29, 13);
+            this.label8.TabIndex = 30;
+            this.label8.Text = "Filter";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(405, 124);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(31, 13);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "Input";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(405, 64);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(54, 13);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "File Name";
+            // 
+            // btnRxReceive
+            // 
+            this.btnRxReceive.Enabled = false;
+            this.btnRxReceive.Location = new System.Drawing.Point(405, 179);
+            this.btnRxReceive.Name = "btnRxReceive";
+            this.btnRxReceive.Size = new System.Drawing.Size(75, 23);
+            this.btnRxReceive.TabIndex = 25;
+            this.btnRxReceive.Text = "Receive";
+            this.btnRxReceive.UseVisualStyleBackColor = true;
+            this.btnRxReceive.Click += new System.EventHandler(this.btnReceive_Click);
             // 
             // tabControl1
             // 
-            this.tabControl1.Controls.Add(this.tabRx);
+            this.tabControl1.Controls.Add(this.tabReceive);
             this.tabControl1.Controls.Add(this.tabTransmit);
-            this.tabControl1.Controls.Add(this.tabDevice);
             this.tabControl1.Controls.Add(this.tabAnalyze);
+            this.tabControl1.Controls.Add(this.tabDevice);
             this.tabControl1.Location = new System.Drawing.Point(1, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(978, 495);
             this.tabControl1.TabIndex = 0;
             // 
-            // errorProviderRx
+            // errorProvider1
             // 
-            this.errorProviderRx.ContainerControl = this;
+            this.errorProvider1.ContainerControl = this;
             // 
-            // errorProviderAn
+            // txOpenFileDialog
             // 
-            this.errorProviderAn.ContainerControl = this;
+            this.txOpenFileDialog.FileName = "openFileDialog1";
             // 
-            // errorProviderDv
+            // dvOpenFileDialog
             // 
-            this.errorProviderDv.ContainerControl = this;
+            this.dvOpenFileDialog.FileName = "openFileDialog1";
             // 
             // Form1
             // 
@@ -2033,12 +2274,16 @@
             this.gbDvDevice.PerformLayout();
             this.tabTransmit.ResumeLayout(false);
             this.tabTransmit.PerformLayout();
-            this.tabRx.ResumeLayout(false);
-            this.tabRx.PerformLayout();
+            this.gbTxOptions.ResumeLayout(false);
+            this.gbTxOptions.PerformLayout();
+            this.gbTxSignalOptions.ResumeLayout(false);
+            this.gbTxSignalOptions.PerformLayout();
+            this.tabReceive.ResumeLayout(false);
+            this.tabReceive.PerformLayout();
+            this.rbRxOptions.ResumeLayout(false);
+            this.rbRxOptions.PerformLayout();
             this.tabControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderRx)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderAn)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderDv)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2053,8 +2298,7 @@
         private System.Windows.Forms.OpenFileDialog openFilterDialog;
         private System.Windows.Forms.ToolTip ttRxSelectFilter;
         private System.Windows.Forms.ToolTip ttAnalyzeTab;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.OpenFileDialog openRecordFileDialog;
+        private System.Windows.Forms.OpenFileDialog anOpenFileDialog;
         private System.Windows.Forms.TabPage tabAnalyze;
         private System.Windows.Forms.GroupBox gbAnWordSummary;
         private System.Windows.Forms.GroupBox gbAnDisplayAs;
@@ -2126,11 +2370,8 @@
         private System.Windows.Forms.TextBox tbAnFirstSample;
         private System.Windows.Forms.TextBox tbAnFloor;
         private System.Windows.Forms.TextBox tbAnClip;
-        private System.Windows.Forms.TextBox tbAnFolder;
         private System.Windows.Forms.TextBox tbAnSignalFile;
         private System.Windows.Forms.Button btnAnSelectFile;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.Button btnAnSelectFolder;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label label27;
@@ -2140,29 +2381,23 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbDvDeviceName;
         private System.Windows.Forms.TabPage tabTransmit;
-        private System.Windows.Forms.TextBox tbTxParam;
         private System.Windows.Forms.TextBox tbTxCount;
         private System.Windows.Forms.TextBox tbTxDelay;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button btnTransmit;
-        private System.Windows.Forms.TabPage tabRx;
+        private System.Windows.Forms.Button btnTxTransmit;
+        private System.Windows.Forms.TabPage tabReceive;
         private System.Windows.Forms.Button btnRxSelectFile;
-        private System.Windows.Forms.TextBox tbRxFolder;
         private System.Windows.Forms.TextBox tbRxFilter;
         private System.Windows.Forms.TextBox tbRxFileName;
-        private System.Windows.Forms.TextBox tbSdrRxSyncTimeout;
-        private System.Windows.Forms.TextBox tbSdrRxNumUsbChannels;
-        private System.Windows.Forms.TextBox tbSdrRxSamPerBuffer;
-        private System.Windows.Forms.TextBox tbSdrRxNumBuffers;
-        private System.Windows.Forms.ComboBox cbSdrRxLnaGain;
-        private System.Windows.Forms.TextBox tbSdrRxBandwidth;
-        private System.Windows.Forms.TextBox tbSdrRxSampleRate;
-        private System.Windows.Forms.TextBox tbSdrRxFrequency;
-        private System.Windows.Forms.TextBox tbSdrArguments;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Button btnRxSelectFolder;
+        private System.Windows.Forms.TextBox tbRxSyncTimeout;
+        private System.Windows.Forms.TextBox tbRxNumXfers;
+        private System.Windows.Forms.TextBox tbRxBufferSize;
+        private System.Windows.Forms.TextBox tbRxNumBuffers;
+        private System.Windows.Forms.ComboBox cbRxLnaGain;
+        private System.Windows.Forms.TextBox tbRxBandwidth;
+        private System.Windows.Forms.TextBox tbRxSampleRate;
+        private System.Windows.Forms.TextBox tbRxFrequency;
         private System.Windows.Forms.Button btnFilterSelect;
         private System.Windows.Forms.ComboBox cbRxFormat;
         private System.Windows.Forms.RadioButton rbRxInputFiltered;
@@ -2172,7 +2407,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnRxReceive;
-        private System.Windows.Forms.ComboBox cbSdrSDR;
+        private System.Windows.Forms.ComboBox cbRxSDR;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Label label17;
@@ -2182,17 +2417,15 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Label label54;
         private System.Windows.Forms.Label label53;
-        private System.Windows.Forms.TextBox tbSdrRxVGain2;
-        private System.Windows.Forms.TextBox tbSdrRxVGain1;
-        private System.Windows.Forms.ErrorProvider errorProviderRx;
+        private System.Windows.Forms.TextBox tbRxVGain2;
+        private System.Windows.Forms.TextBox tbRxVGain1;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox tbSdrRxRecordTime;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.ErrorProvider errorProviderAn;
+        private System.Windows.Forms.TextBox tbRxRecordTime;
+        private System.Windows.Forms.SaveFileDialog rxSaveFileDialog;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.TextBox tbAnIWDelay;
         private System.Windows.Forms.Label label57;
         private System.Windows.Forms.GroupBox gbAnStartBits;
@@ -2224,13 +2457,45 @@
         private System.Windows.Forms.Button btnDvMakeSignal;
         private System.Windows.Forms.TextBox tbDvWordContents;
         private System.Windows.Forms.Label label65;
-        private System.Windows.Forms.ErrorProvider errorProviderDv;
-        private System.Windows.Forms.Button btnDvSaveAsDevice;
         private System.Windows.Forms.Button btnDvOpenDevice;
         private System.Windows.Forms.Button btnDvNewDevice;
         private System.Windows.Forms.GroupBox gbDvDevice;
         private System.Windows.Forms.TextBox tbDvRepetitions;
         private System.Windows.Forms.Label label67;
+        private System.Windows.Forms.Button btnTxOpenFile;
+        private System.Windows.Forms.TextBox tbTxFileName;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.OpenFileDialog txOpenFileDialog;
+        private System.Windows.Forms.OpenFileDialog dvOpenFileDialog;
+        private System.Windows.Forms.SaveFileDialog dvSaveFileDialog;
+        private System.Windows.Forms.Label label69;
+        private System.Windows.Forms.Label label70;
+        private System.Windows.Forms.TextBox tbTxVGain2;
+        private System.Windows.Forms.TextBox tbTxVGain1;
+        private System.Windows.Forms.TextBox tbTxBandwidth;
+        private System.Windows.Forms.TextBox tbTxSampleRate;
+        private System.Windows.Forms.TextBox tbTxFrequency;
+        private System.Windows.Forms.ComboBox cbTxSDR;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.Label label68;
+        private System.Windows.Forms.TextBox tbTxSyncTimeout;
+        private System.Windows.Forms.TextBox tbTxNumXfers;
+        private System.Windows.Forms.TextBox tbTxBufferSize;
+        private System.Windows.Forms.TextBox tbTxNumBuffers;
+        private System.Windows.Forms.Label label71;
+        private System.Windows.Forms.Label label72;
+        private System.Windows.Forms.Label label73;
+        private System.Windows.Forms.Label label74;
+        private System.Windows.Forms.GroupBox gbTxOptions;
+        private System.Windows.Forms.GroupBox gbTxSignalOptions;
+        private System.Windows.Forms.Button btnTxViewSignal;
+        private System.Windows.Forms.Label label76;
+        private System.Windows.Forms.TextBox tbTxSdrStatus;
+        private System.Windows.Forms.Label label75;
+        private System.Windows.Forms.TextBox tbRxSdrStatus;
+        private System.Windows.Forms.GroupBox rbRxOptions;
     }
 }
 

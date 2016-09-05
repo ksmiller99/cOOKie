@@ -1,5 +1,8 @@
-﻿using System;
+﻿// from https://github.com/jmichelp/sdrsharp-bladerf except where noted
+
+using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace cOOKie
 {
@@ -7,6 +10,29 @@ namespace cOOKie
     public unsafe delegate IntPtr bladerf_stream_cb(IntPtr dev, IntPtr stream, ref bladerf_metadata meta, Int16* samples, uint num_samples, IntPtr user_data);
 
     #region Internal enums
+    // added KSM 2016-08-16
+    public enum bladerf_fpga_size 
+    { 
+        BLADERF_FPGA_UNKNOWN = 0, 
+        BLADERF_FPGA_40KLE = 40, 
+        BLADERF_FPGA_115KLE = 115 
+    }
+
+    // added KSM 2016-08-13
+    public enum bladerf_const
+    {
+        BLADERF_RXVGA1_GAIN_MIN = 5,
+        BLADERF_RXVGA1_GAIN_MAX = 30,
+        BLADERF_RXVGA2_GAIN_MIN = 0,
+        BLADERF_RXVGA2_GAIN_MAX = 30,
+        BLADERF_TXVGA1_GAIN_MIN = (-35),
+        BLADERF_TXVGA1_GAIN_MAX = (-4),
+        BLADERF_TXVGA2_GAIN_MIN = 0,
+        BLADERF_TXVGA2_GAIN_MAX = 25,
+        BLADERF_LNA_GAIN_MID_DB = 3,
+        BLADERF_LNA_GAIN_MAX_DB = 6,
+    }
+
     public enum bladerf_backend
     {
         BLADERF_BACKEND_ANY = 0,    /**< "Don't Care" -- use any available backend */
@@ -275,6 +301,17 @@ namespace cOOKie
             return ret;
         }
 
+        // added KSM 2016-08-16
+        [DllImport("bladeRF", EntryPoint = "bladerf_get_fpga_size", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void bladerf_get_fpga_size_native(IntPtr dev, ref bladerf_fpga_size size);
+
+        public static bladerf_fpga_size bladerf_get_fpga_size(IntPtr dev)
+        {
+            bladerf_fpga_size ret = new bladerf_fpga_size();
+            bladerf_get_fpga_size_native(dev, ref ret);
+            return ret;
+        }
+
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_calibrate_dc(IntPtr dev, bladerf_cal_module module);
 
@@ -292,6 +329,9 @@ namespace cOOKie
 
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static unsafe extern int bladerf_sync_rx(IntPtr dev, Int16* samples, uint num_samples, IntPtr metadata, uint timeout_ms);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern int bladerf_sync_tx(IntPtr dev, Int16* samples, uint num_samples, IntPtr metadata, uint timeout_ms);
 
         [DllImport("bladeRF", EntryPoint = "bladerf_rx", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_rx_native(IntPtr dev, bladerf_format format, ref Int16[] samples, uint num_samples, ref bladerf_metadata metadata);
@@ -399,8 +439,11 @@ namespace cOOKie
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
         public static extern int bladerf_get_frequency(IntPtr dev, bladerf_module module, out uint frequency);
 
-        [DllImport("bladeRF", EntryPoint = "bladerf_get_serial", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        public static extern int bladerf_get_serial(IntPtr dev, out string serial);
+        //[DllImport("bladeRF", EntryPoint = "bladerf_get_serial", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //public static extern int bladerf_get_serial(IntPtr dev, out string serial);
+
+        [DllImport("bladeRF", EntryPoint = "bladerf_get_serial", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_get_serial(IntPtr dev, StringBuilder serial);
 
         [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern int bladerf_load_fpga(IntPtr dev, string fpga);
@@ -467,5 +510,25 @@ namespace cOOKie
             }
             return "-";
         }
+
+        // added by KSM 2016-08-13
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_set_gain(IntPtr dev, bladerf_module mod, int gain);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_get_txvga1(IntPtr dev, out int gain);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_get_txvga2(IntPtr dev, out int gain);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_set_txvga1(IntPtr dev, int gain);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int bladerf_set_txvga2(IntPtr dev, int gain);
+
+        [DllImport("bladeRF", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        //public static extern int bladerf_get_fw_log(IntPtr dev, [MarshalAs(UnmanagedType.LPStr)] string filename);
+        public static extern int bladerf_get_fw_log(IntPtr dev, IntPtr filename);
     }
 }

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="cOOKie.BladeRF">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBmwAACIAQkIBAHOhMAAwhAwDiYkAAAABJQAGgRAAkI=</HashCode>
+      <FileName>BladeRF.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cOOKie.PwmWord">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAQQQKAAAAAEAAAAGAAAIAAAIgEASBAAkQQAAEGg=</HashCode>
+      <FileName>PwmWord.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cOOKie.Bin">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAARAAAgAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>PwmWord.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cOOKie.Bit">
+    <Position X="4.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAgARQAAAAAAAwAACAAAAAAIAAAABAAAAAAAAA=</HashCode>
+      <FileName>PwmWord.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="cOOKie.OokDevice">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="cOOKie.OokDevice.SyncEdges" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>OokDevice.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>BBBAAMQAASAAiABAAAEAAABAAAQEAABARgAAAAABgEE=</HashCode>
+      <FileName>OokDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
