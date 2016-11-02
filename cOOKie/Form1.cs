@@ -31,7 +31,7 @@ namespace cOOKie
         StringWriter sdrLog;
 
         //BladeRF SC16Q11 IQ samples
-        Int16[] recordedSignal;
+        //Int16[] recordedSignal;
         Int16[] generatedSignal;
         Int16[] transmittedSignal;
 

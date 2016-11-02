@@ -72,6 +72,7 @@ namespace cOOKie
     //                               const struct complexf *input, size_t count,
     //                               struct complexf *output);
 
+    
     class FirFilter 
     {
         public Filter filter;
@@ -105,6 +106,7 @@ namespace cOOKie
         
     }
 
+    
     class FirStage {
         public uint decimation;
         public double[] taps;
@@ -114,7 +116,7 @@ namespace cOOKie
         public string comment;
         public FirStage[] stages;
     }
-
+    
     //struct FF {
     //    public Filter filter;
     //}
