@@ -47,8 +47,16 @@ namespace cOOKie
             InitializeComponent();
             
             // Create the MATLAB instance 
-            matlab = new MLApp.MLApp();
-            matlab.Execute(@"cd '" + Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "'");
+            try
+            {
+                matlab = new MLApp.MLApp();
+                matlab.Execute(@"cd '" + Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "'");
+            }
+            catch (Exception e) {
+                MessageBox.Show("Coluld not starrt MATLAB. \n Please ensure that MATLAB 2104b or later is installed.", "Error");
+                Application.Exit();
+                Environment.Exit(1);
+            }
 
             rxSaveFileDialog.InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\signals\";
             txOpenFileDialog.InitialDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + @"\signals\";
